@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import BlogPreview from "../Components/BlogPreview.jsx";
 
 function HomePage() {
@@ -23,8 +23,16 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="flex justify-center content-start pt-8">
-      <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sd:grid-cols-1 gap-10 ps-5 pe-5 max-w-[1600px]">
+    <div className="flex flex-col items-center justify-start xl:px-10 px-5">
+      <div className="pt-5 pb-5 flex justify-center btn-block">
+        <Link
+          to="/post/new"
+          className="btn btn-neutral btn-dash w-full max-w-3xl"
+        >
+          New Post
+        </Link>
+      </div>
+      <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sd:grid-cols-1 gap-5 max-w-[1600px] pb-5">
         <BlogPreview />
         <BlogPreview />
         <BlogPreview />

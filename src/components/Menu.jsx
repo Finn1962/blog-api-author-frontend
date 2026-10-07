@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, Link } from "react-router";
 
 function Menu() {
   const navigate = useNavigate();
@@ -62,7 +62,9 @@ function Menu() {
             </div>
           </div>
           <div className="navbar-center">
-            <a className="btn btn-ghost text-xl">daisyUI</a>
+            <Link to="/" className="btn btn-ghost text-xl">
+              daisyUI
+            </Link>
           </div>
           <div className="navbar-end">
             <button className="btn btn-ghost btn-circle">

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "@tinymce/tinymce-react": "^6.3.0",
+    "@tiptap/react": "^3.31.4",
     "daisyui": "^5.7.47",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -31,6 +33,8 @@
   "allowScripts": {
     "tailwindcss@4.3.3": true,
     "daisyui@5.7.47": true,
-    "react-router-dom@7.18.4": true
+    "react-router-dom@7.18.4": true,
+    "@tiptap/starter-kit@3.31.4": true,
+    "@tinymce/tinymce-react@6.3.0": true
   }
 }
