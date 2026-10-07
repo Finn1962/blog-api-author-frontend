@@ -1,6 +1,7 @@
 import Loader from "./Loader.jsx";
 import { useLoader } from "../Contexts/LoaderContext.jsx";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 function LogInForm() {
   const [emailValue, setEmailValue] = useState("");
@@ -9,11 +10,14 @@ function LogInForm() {
 
   const { isLoading, setLoadingTrue, setLoadingFalse } = useLoader();
 
+  const navigate = useNavigate();
+
   async function handleFormSubmit() {
     setLoadingTrue();
     try {
       const response = await fetch("http://localhost:3000/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -23,8 +27,8 @@ function LogInForm() {
         }),
       });
       const result = await response.json();
-      console.log(result);
       setMessage(result.message);
+      if (result.message === "Login successful") navigate("/");
     } catch (error) {
       console.error(error);
     } finally {
