@@ -1,0 +1,74 @@
+import Loader from "./Loader.jsx";
+import { useLoader } from "../Contexts/LoaderContext.jsx";
+import { useState } from "react";
+
+function LogInForm() {
+  const [emailValue, setEmailValue] = useState("");
+  const [passwordValue, setPasswordValue] = useState("");
+  const [message, setMessage] = useState("");
+
+  const { isLoading, setLoadingTrue, setLoadingFalse } = useLoader();
+
+  async function handleFormSubmit() {
+    setLoadingTrue();
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: emailValue,
+          password: passwordValue,
+        }),
+      });
+      const result = await response.json();
+      console.log(result);
+      setMessage(result.message);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingFalse();
+    }
+  }
+
+  return (
+    <fieldset
+      className="fieldset bg-base-100 border-base-300 rounded-box w-xs border p-4 shadow-lg"
+      onKeyDown={(event) => event.key === "Enter" && handleFormSubmit()}
+    >
+      <legend className="fieldset-legend">Login</legend>
+
+      <label className="label">Email</label>
+      <input
+        type="email"
+        className="input"
+        placeholder="Email"
+        onChange={(event) => setEmailValue(event.target.value)}
+        value={emailValue}
+      />
+
+      <label className="label">Password</label>
+      <input
+        type="password"
+        className="input"
+        placeholder="Password"
+        onChange={(event) => setPasswordValue(event.target.value)}
+        value={passwordValue}
+      />
+
+      <button className=" btn btn-neutral mt-4" onClick={handleFormSubmit}>
+        {isLoading ? <Loader /> : "Login"}
+      </button>
+
+      {message !== "" &&
+        (message === "Login successful" ? (
+          <p className="text-success font-bold mt-1">{message}</p>
+        ) : (
+          <p className="text-error font-bold mt-1">{message}</p>
+        ))}
+    </fieldset>
+  );
+}
+
+export default LogInForm;
