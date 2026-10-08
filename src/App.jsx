@@ -9,13 +9,15 @@ function App() {
   return (
     <AppProvider>
       <BrowserRouter>
-        <Menu />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/post/new" element={<PostEditorPage />} />
-          <Route path="/post/edit/:postId" element={<PostEditorPage />} />
-          <Route path="/login" element={<LogInPage />} />
-        </Routes>
+        <div className="bg-base-200 min-h-screen">
+          <Menu />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/post/new" element={<PostEditorPage />} />
+            <Route path="/post/edit/:postId" element={<PostEditorPage />} />
+            <Route path="/login" element={<LogInPage />} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </AppProvider>
   );

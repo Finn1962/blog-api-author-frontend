@@ -7,8 +7,8 @@
   prefersdark: false;
   color-scheme: "light";
   --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(97% 0 0);
-  --color-base-300: oklch(94% 0 0);
+  --color-base-200: oklch(98% 0 0);
+  --color-base-300: oklch(90% 0 0);
   --color-base-content: oklch(0% 0 0);
   --color-primary: oklch(15.906% 0 0);
   --color-primary-content: oklch(100% 0 0);
@@ -34,4 +34,29 @@
   --border: 1px;
   --depth: 0;
   --noise: 0;
+}
+
+.quill {
+  height: 400px;
+  --tool-bar-height: 44px;
+}
+
+.ql-toolbar.ql-snow {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom: none;
+}
+
+/* 2. Ecken des Textfeldes unten abrunden */
+.ql-container.ql-snow {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-color: #fff;
+  height: calc(100% - 42px);
+}
+
+.quill:has(.ql-editor:focus) {
+  outline: 2px solid #000000;
+  outline-offset: 3px;
+  border-radius: 5px;
 }
