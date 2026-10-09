@@ -12,7 +12,7 @@ function LogInForm() {
 
   const navigate = useNavigate();
 
-  async function handleFormSubmit() {
+  async function fetchLoginData() {
     setLoadingTrue();
     try {
       const response = await fetch("http://localhost:3000/login", {
@@ -39,7 +39,7 @@ function LogInForm() {
   return (
     <fieldset
       className="fieldset bg-base-100 border-base-300 rounded-box w-xs border p-4 shadow-lg"
-      onKeyDown={(event) => event.key === "Enter" && handleFormSubmit()}
+      onKeyDown={(event) => event.key === "Enter" && fetchLoginData()}
     >
       <legend className="fieldset-legend">Login</legend>
 
@@ -61,7 +61,7 @@ function LogInForm() {
         value={passwordValue}
       />
 
-      <button className=" btn btn-neutral mt-4" onClick={handleFormSubmit}>
+      <button className=" btn btn-neutral mt-4" onClick={fetchLoginData}>
         {isLoading ? <Loader /> : "Login"}
       </button>
 

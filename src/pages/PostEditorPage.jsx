@@ -1,8 +1,42 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import RichTextEditor from "../Components/RichTextEditor.jsx";
+import { checkAuth } from "../utils/loggedIn.js";
 
 function PostEditorPage() {
+  const [statusValue, setStatusValue] = useState("draft");
+  const [titleValue, setTitleValue] = useState("");
   const [textEditorValue, setTextEditorValue] = useState("");
+  const [imageValue, setImageValue] = useState(null);
+
+  const [errors, setErrors] = useState([]);
+
+  const navigate = useNavigate();
+
+  function fetchNewPostData() {
+    const formData = new FormData();
+    formData.append("title", titleValue);
+    formData.append("content", textEditorValue);
+    formData.append("status", statusValue);
+    if (imageValue !== "") formData.append("image", imageValue);
+
+    fetch("http://localhost:3000/post/new", {
+      method: "Post",
+      body: formData,
+      credentials: "include",
+    })
+      .then(checkAuth(navigate))
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.errors) {
+          console.log(result);
+          setErrors(result.errors);
+        } else {
+          console.log(result);
+          navigate("/");
+        }
+      });
+  }
 
   return (
     <div className="flex flex-col items-center justify-start xl:px-10 px-5 ">
@@ -25,13 +59,16 @@ function PostEditorPage() {
               </svg>
             </button>
             <select
-              defaultValue="Draft"
               className="select font-normal border-base-300"
+              defaultValue={statusValue}
+              onChange={(event) => setStatusValue(event.target.value)}
             >
-              <option>Draft</option>
-              <option>Public</option>
+              <option value="draft">Draft</option>
+              <option value="public">Public</option>
             </select>
-            <button className="btn btn-success">Save</button>
+            <button className="btn btn-success" onClick={fetchNewPostData}>
+              Save
+            </button>
           </div>
         </div>
 
@@ -42,7 +79,12 @@ function PostEditorPage() {
               type="text"
               className="input "
               placeholder="My awesome Post"
+              value={titleValue}
+              onChange={(event) => setTitleValue(event.target.value)}
             />
+            {errors.some((error) => error.msg === "Title cannot be empty") && (
+              <p className="text-error font-semibold">Title cannot be empty</p>
+            )}
           </fieldset>
 
           <fieldset className="fieldset">
@@ -51,10 +93,31 @@ function PostEditorPage() {
               textEditorValue={textEditorValue}
               setTextEditorValue={setTextEditorValue}
             />
+            {errors.some(
+              (error) => error.msg === "Content cannot be empty",
+            ) && (
+              <p className="text-error font-semibold">
+                Content cannot be empty
+              </p>
+            )}
           </fieldset>
           <fieldset className="fieldset">
             <legend className="fieldset-legend">Image</legend>
-            <input type="file" className="file-input" />
+            <input
+              type="file"
+              className="file-input"
+              onChange={(event) => setImageValue(event.target.files[0])}
+            />
+            {errors.some((error) => error.msg === "Image is too large") && (
+              <p className="text-error font-semibold">Image is too large</p>
+            )}
+            {errors.some(
+              (error) => error.msg === "Only image files are allowed",
+            ) && (
+              <p className="text-error font-semibold">
+                Only image files are allowed
+              </p>
+            )}
             <label className="label">Max size 2MB</label>
           </fieldset>
         </div>

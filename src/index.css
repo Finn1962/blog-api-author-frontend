@@ -36,6 +36,8 @@
   --noise: 0;
 }
 
+/*Quill-editor*/
+
 .quill {
   height: 400px;
 }
@@ -46,7 +48,6 @@
   border-bottom: none;
 }
 
-/* 2. Ecken des Textfeldes unten abrunden */
 .ql-container.ql-snow {
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
