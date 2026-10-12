@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router";
-import { checkAuth } from "../utils/loggedIn.js";
+import { Link } from "react-router";
 import { useLoader } from "../Contexts/LoaderContext.jsx";
+import { useFetch } from "../hooks/useFetch.js";
 import BlogPreview from "../Components/BlogPreview.jsx";
 import SearchBar from "../Components/SearchBar.jsx";
 import Loader from "../Components/Loader.jsx";
@@ -11,22 +11,18 @@ function HomePage() {
   const [publicFilter, setPublicFilter] = useState("all");
 
   const { setLoadingTrue, setLoadingFalse } = useLoader();
-
-  const navigate = useNavigate();
+  const { fetchData } = useFetch();
 
   useEffect(() => {
-    setLoadingTrue();
-    fetch("http://localhost:3000/post", {
+    fetchData({
+      url: "http://localhost:3000/post",
       method: "GET",
-      credentials: "include",
-    })
-      .then(checkAuth(navigate))
-      .then((response) => response.json())
-      .then((result) => {
+      setLoadingTrue,
+      setLoadingFalse,
+      callback: (result) => {
         setBlogs(result.blogs);
-      })
-      .catch((error) => console.error(error))
-      .finally(() => setLoadingFalse());
+      },
+    });
   }, []);
 
   return (

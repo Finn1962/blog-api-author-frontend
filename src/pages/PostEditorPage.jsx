@@ -1,17 +1,22 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import RichTextEditor from "../Components/RichTextEditor.jsx";
-import { checkAuth } from "../utils/loggedIn.js";
+
+import { useFetch } from "../hooks/useFetch.js";
 
 function PostEditorPage() {
   const [statusValue, setStatusValue] = useState("draft");
   const [titleValue, setTitleValue] = useState("");
   const [textEditorValue, setTextEditorValue] = useState("");
   const [imageValue, setImageValue] = useState(null);
+  const imageSrc = imageValue ? URL.createObjectURL(imageValue) : null;
 
   const [errors, setErrors] = useState([]);
 
+  const fileInputRef = useRef(null);
+
   const navigate = useNavigate();
+  const { fetchData } = useFetch();
 
   function fetchNewPostData() {
     const formData = new FormData();
@@ -20,14 +25,12 @@ function PostEditorPage() {
     formData.append("status", statusValue);
     if (imageValue !== "") formData.append("image", imageValue);
 
-    fetch("http://localhost:3000/post/new", {
-      method: "Post",
+    fetchData({
+      url: "http://localhost:3000/post/new",
+      method: "POST",
       body: formData,
-      credentials: "include",
-    })
-      .then(checkAuth(navigate))
-      .then((response) => response.json())
-      .then((result) => {
+      stringifyBody: false,
+      callback: (result) => {
         if (result.errors) {
           console.log(result);
           setErrors(result.errors);
@@ -35,7 +38,8 @@ function PostEditorPage() {
           console.log(result);
           navigate("/");
         }
-      });
+      },
+    });
   }
 
   return (
@@ -77,7 +81,7 @@ function PostEditorPage() {
             <legend className="fieldset-legend ">Title</legend>
             <input
               type="text"
-              className="input "
+              className="input w-full"
               placeholder="My awesome Post"
               value={titleValue}
               onChange={(event) => setTitleValue(event.target.value)}
@@ -102,19 +106,44 @@ function PostEditorPage() {
             )}
           </fieldset>
           <fieldset className="fieldset">
-            <legend className="fieldset-legend">Image</legend>
+            <legend className="fieldset-legend pt-0 pb-2">Image</legend>
             <input
               type="file"
-              className="file-input"
+              className="file-input w-full mb-2"
               onChange={(event) => setImageValue(event.target.files[0])}
+              ref={fileInputRef}
             />
+            {imageSrc && (
+              <div className="w-full max-w-100 border rounded-lg border-base-300 mb-2 relative min-h-25">
+                <button
+                  className="btn bg-base-100 boder-base-100 p-2 w-10 absolute right-1 top-1"
+                  onClick={() => {
+                    setImageValue(null);
+                    fileInputRef.current.value = null;
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    class="bi bi-x w-full opacity-75"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                  </svg>
+                </button>
+                <img
+                  src={imageSrc}
+                  className="object-cover w-full rounded-lg "
+                />
+              </div>
+            )}
             {errors.some((error) => error.msg === "Image is too large") && (
-              <p className="text-error font-semibold">Image is too large</p>
+              <p className="text-error font-semibold ">Image is too large</p>
             )}
             {errors.some(
               (error) => error.msg === "Only image files are allowed",
             ) && (
-              <p className="text-error font-semibold">
+              <p className="text-error font-semibold ">
                 Only image files are allowed
               </p>
             )}

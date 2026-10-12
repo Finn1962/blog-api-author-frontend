@@ -2,6 +2,7 @@ import Loader from "./Loader.jsx";
 import { useLoader } from "../Contexts/LoaderContext.jsx";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useFetch } from "../hooks/useFetch.js";
 
 function LogInForm() {
   const [emailValue, setEmailValue] = useState("");
@@ -11,6 +12,7 @@ function LogInForm() {
   const { isLoading, setLoadingTrue, setLoadingFalse } = useLoader();
 
   const navigate = useNavigate();
+  const { fetchData } = useFetch();
 
   async function fetchLoginData() {
     setLoadingTrue();
