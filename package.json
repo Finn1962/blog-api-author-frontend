@@ -20,6 +20,7 @@
     "react-dom": "^19.2.8",
     "react-quill-new": "^3.8.3",
     "react-router-dom": "^7.18.4",
+    "styled-components": "^6.6.0",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
@@ -38,6 +39,7 @@
     "daisyui@5.7.47": true,
     "react-router-dom@7.18.4": true,
     "@tiptap/starter-kit@3.31.4": true,
-    "@tinymce/tinymce-react@6.3.0": true
+    "@tinymce/tinymce-react@6.3.0": true,
+    "styled-components@6.6.0": true
   }
 }

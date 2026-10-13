@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import RichTextEditor from "../Components/RichTextEditor.jsx";
 
 import { useFetch } from "../hooks/useFetch.js";
@@ -46,7 +46,9 @@ function PostEditorPage() {
     <div className="flex flex-col items-center justify-start xl:px-10 px-5 ">
       <div className="pt-5 pb-10 flex justify-center flex-col w-full max-w-5xl gap-5 ">
         <div className="flex items-start justify-between bg-base-100 p-3 rounded-md shadow-sm">
-          <button className="btn btn btn-soft">← Discard</button>
+          <Link className="btn btn btn-soft" to={"/"}>
+            ← Discard
+          </Link>
           <div className="flex justify-center items-center gap-5">
             <button className="btn bg-base-100 font-normal border-base-300">
               Show preview
