@@ -4,6 +4,7 @@ import LogInPage from "./pages/LogInPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import PostEditorPage from "./pages/PostEditorPage.jsx";
 import Menu from "./Components/Menu.jsx";
+import ConfirmForm from "./Components/ConfirmForm.jsx";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <BrowserRouter>
         <div className="bg-base-200 min-h-screen">
           <Menu />
+          <ConfirmForm />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/post/new" element={<PostEditorPage />} />

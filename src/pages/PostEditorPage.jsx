@@ -9,6 +9,7 @@ function PostEditorPage() {
   const [titleValue, setTitleValue] = useState("");
   const [textEditorValue, setTextEditorValue] = useState("");
   const [imageValue, setImageValue] = useState(null);
+  const [tagsValue, setTagsValue] = useState("");
   const imageSrc = imageValue ? URL.createObjectURL(imageValue) : null;
 
   const [errors, setErrors] = useState([]);
@@ -23,19 +24,18 @@ function PostEditorPage() {
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
     formData.append("status", statusValue);
+    formData.append("tags", tagsValue);
     if (imageValue !== "") formData.append("image", imageValue);
 
     fetchData({
-      url: "http://localhost:3000/post/new",
+      url: "http://localhost:3000/post",
       method: "POST",
       body: formData,
       stringifyBody: false,
       callback: (result) => {
         if (result.errors) {
-          console.log(result);
           setErrors(result.errors);
         } else {
-          console.log(result);
           navigate("/");
         }
       },
@@ -72,13 +72,13 @@ function PostEditorPage() {
               <option value="draft">Draft</option>
               <option value="public">Public</option>
             </select>
-            <button className="btn btn-success" onClick={fetchNewPostData}>
+            <button className="btn btn btn-primary" onClick={fetchNewPostData}>
               Save
             </button>
           </div>
         </div>
 
-        <div className="bg-base-100 p-3 rounded-md shadow-sm flex flex-col gap-3 pb-5">
+        <div className="bg-base-100 p-3 rounded-md shadow-sm flex flex-col gap-5 pb-5">
           <fieldset className="fieldset">
             <legend className="fieldset-legend ">Title</legend>
             <input
@@ -111,14 +111,14 @@ function PostEditorPage() {
             <legend className="fieldset-legend pt-0 pb-2">Image</legend>
             <input
               type="file"
-              className="file-input w-full mb-2"
+              className="file-input w-full mb-1"
               onChange={(event) => setImageValue(event.target.files[0])}
               ref={fileInputRef}
             />
             {imageSrc && (
-              <div className="w-full max-w-100 border rounded-lg border-base-300 mb-2 relative min-h-25">
+              <div className="w-full max-w-100 border rounded-lg border-base-300 mb-1 relative min-h-25">
                 <button
-                  className="btn bg-base-100 boder-base-100 p-2 w-10 absolute right-1 top-1"
+                  className="btn btn-circle boder-base-100 p-2 w-10 absolute right-1 top-1"
                   onClick={() => {
                     setImageValue(null);
                     fileInputRef.current.value = null;
@@ -127,7 +127,7 @@ function PostEditorPage() {
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
-                    class="bi bi-x w-full opacity-75"
+                    className="bi bi-x w-full opacity-75"
                     viewBox="0 0 16 16"
                   >
                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
@@ -135,7 +135,7 @@ function PostEditorPage() {
                 </button>
                 <img
                   src={imageSrc}
-                  className="object-cover w-full rounded-lg "
+                  className="object-cover w-full max-h-150 rounded-lg "
                 />
               </div>
             )}
@@ -150,6 +150,16 @@ function PostEditorPage() {
               </p>
             )}
             <label className="label">Max size 2MB</label>
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Tags</legend>
+            <textarea
+              className="textarea h-24 w-full"
+              placeholder=""
+              value={tagsValue}
+              onChange={(event) => setTagsValue(event.target.value)}
+            ></textarea>
+            <div className="label">Separate tags with a comma</div>
           </fieldset>
         </div>
       </div>

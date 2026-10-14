@@ -7,7 +7,7 @@ import SearchBar from "../Components/SearchBar.jsx";
 import Loader from "../Components/Loader.jsx";
 
 function HomePage() {
-  const [blogs, setBlogs] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [publicFilter, setPublicFilter] = useState("all");
 
   const { setLoadingTrue, setLoadingFalse } = useLoader();
@@ -16,11 +16,10 @@ function HomePage() {
   useEffect(() => {
     fetchData({
       url: "http://localhost:3000/post",
-      method: "GET",
       setLoadingTrue,
       setLoadingFalse,
       callback: (result) => {
-        setBlogs(result.blogs);
+        setPosts(result.posts);
       },
     });
   }, []);
@@ -71,14 +70,26 @@ function HomePage() {
             <SearchBar className="join w-full max-w-300 md:hidden flex" />
           </div>
           <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sd:grid-cols-1 gap-5  pb-5">
-            {blogs.map((blog) => (
-              <BlogPreview
-                key={blog.id}
-                title={blog.title}
-                content={blog.content}
-                imageUrl={blog.image_url}
-              />
-            ))}
+            {posts.map((blog) => {
+              return (
+                <BlogPreview
+                  blog={blog}
+                  key={blog.id}
+                  onDelete={() => {
+                    fetchData({
+                      url: `http://localhost:3000/post/${blog.id}`,
+                      method: "DELETE",
+                    });
+                    setPosts((prev) => {
+                      const abc = prev.filter(
+                        (current) => current.id !== blog.id,
+                      );
+                      return abc;
+                    });
+                  }}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

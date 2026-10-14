@@ -5,11 +5,11 @@ function useFetch() {
 
   async function fetchData({
     url,
-    method,
+    method = "GET",
     body = null,
     setLoadingTrue = () => {},
     setLoadingFalse = () => {},
-    callback,
+    callback = () => {},
     stringifyBody = true,
   }) {
     try {
@@ -23,8 +23,6 @@ function useFetch() {
         credentials: "include",
         body: hasBody ? (stringifyBody ? JSON.stringify(body) : body) : null,
       });
-
-      console.log(response);
 
       if (response.status === 401) {
         const refreshResponse = await fetch(
