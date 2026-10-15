@@ -1,23 +1,69 @@
-import { useState, useRef } from "react";
-import { Link, useNavigate } from "react-router";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useParams, useLocation } from "react-router";
 import RichTextEditor from "../Components/RichTextEditor.jsx";
 
 import { useFetch } from "../hooks/useFetch.js";
 
 function PostEditorPage() {
-  const [statusValue, setStatusValue] = useState("draft");
-  const [titleValue, setTitleValue] = useState("");
-  const [textEditorValue, setTextEditorValue] = useState("");
-  const [imageValue, setImageValue] = useState(null);
-  const [tagsValue, setTagsValue] = useState("");
-  const imageSrc = imageValue ? URL.createObjectURL(imageValue) : null;
-
-  const [errors, setErrors] = useState([]);
-
-  const fileInputRef = useRef(null);
+  const location = useLocation();
 
   const navigate = useNavigate();
   const { fetchData } = useFetch();
+  const { postId } = useParams();
+
+  const [mode] = useState(() => {
+    switch (true) {
+      case location.pathname.includes("new"):
+        return "new";
+
+      case location.pathname.includes("edit"):
+        return "edit";
+    }
+  });
+
+  const [statusValue, setStatusValue] = useState("draft");
+  const [titleValue, setTitleValue] = useState("");
+  const [textEditorValue, setTextEditorValue] = useState("");
+  const [tagsValue, setTagsValue] = useState("");
+  const [errors, setErrors] = useState([]);
+  const [imageValue, setImageValue] = useState(null);
+  const imageSrc = imageValue ? URL.createObjectURL(imageValue) : null;
+
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (mode !== "edit") return;
+    fetchData({
+      url: `http://localhost:3000/post/${postId}`,
+      callback: async (result) => {
+        setStatusValue(result.post.status);
+        setTitleValue(result.post.title);
+        setTextEditorValue(result.post.content);
+        setTagsValue(result.post.tags.map((tag) => tag.content).join(", "));
+        if (result.post.image_url) {
+          try {
+            const response = await fetch(result.post.image_url);
+            const blob = await response.blob();
+            const file = new File(
+              [blob],
+              result.post.image_path || "image.jpg",
+              {
+                type: blob.type,
+              },
+            );
+            setImageValue(file);
+            if (fileInputRef.current) {
+              const dataTransfer = new DataTransfer();
+              dataTransfer.items.add(file);
+              fileInputRef.current.files = dataTransfer.files;
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      },
+    });
+  }, []);
 
   function fetchNewPostData() {
     const formData = new FormData();
@@ -46,11 +92,14 @@ function PostEditorPage() {
     <div className="flex flex-col items-center justify-start xl:px-10 px-5 ">
       <div className="pt-5 pb-10 flex justify-center flex-col w-full max-w-5xl gap-5 ">
         <div className="flex items-start justify-between bg-base-100 p-3 rounded-md shadow-sm">
-          <Link className="btn btn btn-soft" to={"/"}>
+          <Link
+            className="btn btn-outline font-normal border-base-300"
+            to={"/"}
+          >
             ← Discard
           </Link>
           <div className="flex justify-center items-center gap-5">
-            <button className="btn bg-base-100 font-normal border-base-300">
+            <button className="btn btn-outline font-normal border-base-300">
               Show preview
               <svg
                 xmlns="http://www.w3.org/2000/svg"
