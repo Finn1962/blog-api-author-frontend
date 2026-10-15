@@ -1,19 +1,20 @@
-function SearchBar({ className }) {
+function SearchBar({ className, searchValue, setSearchValue, fetchSearch }) {
   return (
     <div className={className}>
-      <input className="input join-item w-full " placeholder="Search" />
-
-      <select
-        className="select join-item max-w-25 min-w-20 border-e-0"
-        defaultValue="None"
-      >
-        <option>None</option>
-        <option>Sci-fi</option>
-        <option>Drama</option>
-      </select>
+      <input
+        className="input join-item w-full border-e-0"
+        placeholder="Search"
+        value={searchValue}
+        onChange={(event) => {
+          setSearchValue(event.target.value);
+        }}
+      />
 
       <div className="indicator">
-        <button className="btn btn-outline border-base-300 font-regular w-25">
+        <button
+          className="btn btn-outline border-base-300 font-regular w-25"
+          onClick={fetchSearch}
+        >
           Search
         </button>
       </div>

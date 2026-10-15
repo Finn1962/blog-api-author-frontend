@@ -15,13 +15,12 @@ function PostEditorPage() {
     switch (true) {
       case location.pathname.includes("new"):
         return "new";
-
       case location.pathname.includes("edit"):
         return "edit";
     }
   });
 
-  const [statusValue, setStatusValue] = useState("draft");
+  const [statusValue, setStatusValue] = useState("DRAFT");
   const [titleValue, setTitleValue] = useState("");
   const [textEditorValue, setTextEditorValue] = useState("");
   const [tagsValue, setTagsValue] = useState("");
@@ -40,6 +39,7 @@ function PostEditorPage() {
         setTitleValue(result.post.title);
         setTextEditorValue(result.post.content);
         setTagsValue(result.post.tags.map((tag) => tag.content).join(", "));
+
         if (result.post.image_url) {
           try {
             const response = await fetch(result.post.image_url);
@@ -79,11 +79,29 @@ function PostEditorPage() {
       body: formData,
       stringifyBody: false,
       callback: (result) => {
-        if (result.errors) {
-          setErrors(result.errors);
-        } else {
-          navigate("/");
-        }
+        if (result.errors) setErrors(result.errors);
+        else navigate("/");
+      },
+    });
+  }
+
+  function fetchUpdatedPostData() {
+    const formData = new FormData();
+    formData.append("title", titleValue);
+    formData.append("content", textEditorValue);
+    formData.append("status", statusValue);
+    formData.append("tags", tagsValue);
+    formData.append("id", postId);
+    if (imageValue !== "") formData.append("image", imageValue);
+
+    fetchData({
+      url: "http://localhost:3000/post",
+      method: "PUT",
+      body: formData,
+      stringifyBody: false,
+      callback: (result) => {
+        if (result.errors) setErrors(result.errors);
+        else navigate("/");
       },
     });
   }
@@ -115,13 +133,19 @@ function PostEditorPage() {
             </button>
             <select
               className="select font-normal border-base-300"
-              defaultValue={statusValue}
+              value={statusValue}
               onChange={(event) => setStatusValue(event.target.value)}
             >
-              <option value="draft">Draft</option>
-              <option value="public">Public</option>
+              <option value="DRAFT">Draft</option>
+              <option value="PUBLIC">Public</option>
             </select>
-            <button className="btn btn btn-primary" onClick={fetchNewPostData}>
+            <button
+              className="btn btn btn-primary"
+              onClick={() => {
+                if (mode === "new") fetchNewPostData();
+                else fetchUpdatedPostData();
+              }}
+            >
               Save
             </button>
           </div>

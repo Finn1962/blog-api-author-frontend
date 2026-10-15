@@ -143,7 +143,7 @@ function EditButton({ blogId }) {
 }
 
 function Tag({ tag }) {
-  return <span className="badge badge-neutral">{tag.content}</span>;
+  return <span className="badge badge-primary">{tag.content}</span>;
 }
 
 export default BlogPreview;

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { useLoader } from "../Contexts/LoaderContext.jsx";
 import { useFetch } from "../hooks/useFetch.js";
+import { debounce } from "../utils/debounce.js";
 
 import BlogPreview from "../Components/BlogPreview.jsx";
 import SearchBar from "../Components/SearchBar.jsx";
@@ -9,10 +10,22 @@ import Loader from "../Components/Loader.jsx";
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
-  const [publicFilter, setPublicFilter] = useState("all");
+  const [searchValue, setSearchValue] = useState("");
+  const [statusFilterValue, setStatusFilterValue] = useState("ALL");
 
   const { setLoadingTrue, setLoadingFalse } = useLoader();
   const { fetchData } = useFetch();
+
+  function fetchSearch() {
+    fetchData({
+      url: `http://localhost:3000/post/search?searchValue=${searchValue}&status=${statusFilterValue}`,
+      setLoadingTrue,
+      setLoadingFalse,
+      callback: (result) => {
+        setPosts(result.posts);
+      },
+    });
+  }
 
   useEffect(() => {
     fetchData({
@@ -24,6 +37,9 @@ function HomePage() {
       },
     });
   }, []);
+
+  useEffect(fetchSearch, [statusFilterValue]);
+  useEffect(() => debounce(fetchSearch), [searchValue]);
 
   return (
     <>
@@ -37,12 +53,12 @@ function HomePage() {
                   className="btn btn-outline  border-base-300"
                   type="checkbox"
                   name="frameworks"
-                  value="public"
+                  value="PUBLIC"
                   aria-label="Public"
-                  checked={publicFilter === "public"}
+                  checked={statusFilterValue === "PUBLIC"}
                   onChange={() =>
-                    setPublicFilter((prev) =>
-                      prev !== "public" ? "public" : "all",
+                    setStatusFilterValue((prev) =>
+                      prev !== "PUBLIC" ? "PUBLIC" : "ALL",
                     )
                   }
                 />
@@ -50,17 +66,22 @@ function HomePage() {
                   className="btn btn-outline border-base-300"
                   type="checkbox"
                   name="frameworks"
-                  value="draft"
+                  value="DRAFT"
                   aria-label="Draft"
-                  checked={publicFilter === "draft"}
+                  checked={statusFilterValue === "DRAFT"}
                   onChange={() =>
-                    setPublicFilter((prev) =>
-                      prev !== "draft" ? "draft" : "all",
+                    setStatusFilterValue((prev) =>
+                      prev !== "DRAFT" ? "DRAFT" : "ALL",
                     )
                   }
                 />
               </div>
-              <SearchBar className="join w-full max-w-300 md:flex hidden" />
+              <SearchBar
+                className="join w-full max-w-300 md:flex hidden"
+                searchValue={searchValue}
+                setSearchValue={setSearchValue}
+                fetchSearch={fetchSearch}
+              />
               <Link
                 to="/post/new"
                 className="btn btn-primary font-regular border-base-300 w-32"
@@ -68,10 +89,15 @@ function HomePage() {
                 New Post +
               </Link>
             </div>
-            <SearchBar className="join w-full max-w-300 md:hidden flex" />
+            <SearchBar
+              className="join w-full max-w-300 md:hidden flex"
+              searchValue={searchValue}
+              setSearchValue={setSearchValue}
+              fetchSearch={fetchSearch}
+            />
           </div>
           <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sd:grid-cols-1 gap-5  pb-5">
-            {posts.map((blog) => {
+            {posts?.map((blog) => {
               return (
                 <BlogPreview
                   blog={blog}
