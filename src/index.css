@@ -2,55 +2,49 @@
 @plugin "daisyui";
 
 @plugin "daisyui/theme" {
-  name: "lofi";
-  default: false;
+  name: "wireframe";
+  default: true;
   prefersdark: false;
   color-scheme: "light";
   --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(98% 0 0);
-  --color-base-300: oklch(90% 0 0);
-  --color-base-content: oklch(0% 0 0);
-  --color-primary: oklch(15.906% 0 0);
-  --color-primary-content: oklch(100% 0 0);
-  --color-secondary: oklch(21.455% 0.001 17.278);
-  --color-secondary-content: oklch(100% 0 0);
-  --color-accent: oklch(26.861% 0 0);
-  --color-accent-content: oklch(100% 0 0);
-  --color-neutral: oklch(0% 0 0);
-  --color-neutral-content: oklch(100% 0 0);
-  --color-info: oklch(74% 0.16 232.661);
-  --color-info-content: oklch(15.908% 0.02 205.9);
-  --color-success: oklch(90.13% 0.153 164.14);
-  --color-success-content: oklch(18.026% 0.03 164.14);
-  --color-warning: oklch(88.37% 0.135 79.94);
-  --color-warning-content: oklch(17.674% 0.027 79.94);
-  --color-error: oklch(70% 0.191 22.216);
-  --color-error-content: oklch(15.732% 0.03 28.47);
-  --radius-selector: 2rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
+  --color-base-200: oklch(95% 0 0);
+  --color-base-300: oklch(92% 0 0);
+  --color-base-content: oklch(20% 0 0);
+  --color-primary: oklch(45% 0.24 277.023);
+  --color-primary-content: oklch(98% 0.003 247.858);
+  --color-secondary: oklch(12% 0.042 264.695);
+  --color-secondary-content: oklch(98% 0.003 247.858);
+  --color-accent: oklch(92% 0 0);
+  --color-accent-content: oklch(26% 0 0);
+  --color-neutral: oklch(92% 0 0);
+  --color-neutral-content: oklch(26% 0 0);
+  --color-info: oklch(58% 0.158 241.966);
+  --color-info-content: oklch(95% 0.026 236.824);
+  --color-success: oklch(52% 0.154 150.069);
+  --color-success-content: oklch(96% 0.044 156.743);
+  --color-warning: oklch(66% 0.179 58.318);
+  --color-warning-content: oklch(96% 0.059 95.617);
+  --color-error: oklch(50% 0.213 27.518);
+  --color-error-content: oklch(93% 0.032 17.717);
+  --radius-selector: 0rem;
+  --radius-field: 0rem;
+  --radius-box: 0rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 1px;
+  --border: 0.5px;
   --depth: 0;
   --noise: 0;
 }
-
-/*Quill-editor*/
 
 .quill {
   height: 400px;
 }
 
 .ql-toolbar.ql-snow {
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
   border-bottom: none;
 }
 
 .ql-container.ql-snow {
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
   background-color: #fff;
   height: calc(100% - 42px);
 }

@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { useConfirm } from "../Contexts/ConfirmContext.jsx";
 
-function BlogPreview({ blog, onDelete, onEdit }) {
+function BlogPreview({ blog, onDelete }) {
   return (
     <div className="card bg-base-100 shadow-sm ">
       <div className="flex justify-start items-center gap-1 pt-1 ps-2 pb-1">
         <DeleteButton onDelete={onDelete} />
-        <EditButton onEdit={onEdit} blogId={blog.id} />
+        <EditButton blogId={blog.id} />
       </div>
       {blog.image_url ? (
         <figure>
@@ -35,7 +34,7 @@ function BlogPreview({ blog, onDelete, onEdit }) {
           <h2 className="card-title">{blog.title}</h2>
           <p
             className={`text-end font-semibold text-${
-              blog.status === "PUBLIC" ? "info" : "error"
+              blog.status === "PUBLIC" ? "success" : "error"
             }`}
           >
             {blog.status}
@@ -62,19 +61,14 @@ function BlogPreview({ blog, onDelete, onEdit }) {
 
 function DeleteButton({ onDelete }) {
   const [isHovered, setIsHovered] = useState(false);
-  const { showConfirm, setConfirmText, setConfirmCallback } = useConfirm();
 
   return (
     <>
       <button
-        className="btn btn-neutral btn-outline btn-circle border-none p-3"
+        className="btn btn-outline btn-circle border-none p-3"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={() => {
-          showConfirm();
-          setConfirmText("Do you really want to delete the post?");
-          setConfirmCallback(() => onDelete);
-        }}
+        onClick={onDelete}
       >
         {isHovered ? (
           <svg
@@ -93,7 +87,7 @@ function DeleteButton({ onDelete }) {
             width="16"
             height="16"
             fill="currentColor"
-            className="bi bi-trash"
+            className="bi bi-trash opacity-100"
             viewBox="0 0 16 16"
           >
             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
@@ -110,7 +104,7 @@ function EditButton({ blogId }) {
 
   return (
     <Link
-      className="btn btn-neutral btn-outline btn-circle border-none p-3"
+      className="btn btn-outline btn-circle border-none p-3"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       to={`/post/edit/${blogId}`}

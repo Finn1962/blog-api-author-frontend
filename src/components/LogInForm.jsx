@@ -1,42 +1,16 @@
 import Loader from "./Loader.jsx";
+
 import { useLoader } from "../Contexts/LoaderContext.jsx";
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { useFetch } from "../hooks/useFetch.js";
 
-function LogInForm() {
-  const [emailValue, setEmailValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
-  const [message, setMessage] = useState("");
-
-  const { isLoading, setLoadingTrue, setLoadingFalse } = useLoader();
-
-  const navigate = useNavigate();
-  const { fetchData } = useFetch();
-
-  async function fetchLoginData() {
-    setLoadingTrue();
-    try {
-      const response = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: emailValue,
-          password: passwordValue,
-        }),
-      });
-      const result = await response.json();
-      setMessage(result.message);
-      if (result.message === "Login successful") navigate("/");
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingFalse();
-    }
-  }
+function LogInForm({
+  fetchLoginData,
+  emailValue,
+  setEmailValue,
+  passwordValue,
+  setPasswordValue,
+  message,
+}) {
+  const { isLoading } = useLoader();
 
   return (
     <fieldset
@@ -63,7 +37,7 @@ function LogInForm() {
         value={passwordValue}
       />
 
-      <button className=" btn btn-neutral mt-4" onClick={fetchLoginData}>
+      <button className=" btn btn-primary mt-4" onClick={fetchLoginData}>
         {isLoading ? <Loader /> : "Login"}
       </button>
 

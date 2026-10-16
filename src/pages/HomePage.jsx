@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { useLoader } from "../Contexts/LoaderContext.jsx";
 import { useFetch } from "../hooks/useFetch.js";
+import { useConfirm } from "../Contexts/ConfirmContext.jsx";
 import { debounce } from "../utils/debounce.js";
 
+import PageWrapper from "../Components/PageWrapper.jsx";
 import BlogPreview from "../Components/BlogPreview.jsx";
 import SearchBar from "../Components/SearchBar.jsx";
 import Loader from "../Components/Loader.jsx";
@@ -15,6 +17,13 @@ function HomePage() {
 
   const { setLoadingTrue, setLoadingFalse } = useLoader();
   const { fetchData } = useFetch();
+  const {
+    showConfirm,
+    setConfirmText,
+    setAlertText,
+    setTypeOfAlert,
+    setConfirmCallback,
+  } = useConfirm();
 
   function fetchSearch() {
     fetchData({
@@ -44,9 +53,9 @@ function HomePage() {
   return (
     <>
       <Loader className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50" />
-      <div className="flex flex-col items-center justify-start xl:px-10 px-5 pt-5">
+      <PageWrapper>
         <div className="max-w-[1600px] w-full">
-          <div className="flex flex-col  gap-3 w-full bg-base-100 p-3 rounded-md mb-5 shadow-sm ">
+          <div className="flex flex-col  gap-3 w-full bg-base-100 p-3  mb-5 shadow-sm ">
             <div className=" flex justify-between items-center gap-5">
               <div className="filter flex-nowrap">
                 <input
@@ -103,15 +112,21 @@ function HomePage() {
                   blog={blog}
                   key={blog.id}
                   onDelete={() => {
-                    fetchData({
-                      url: `http://localhost:3000/post/${blog.id}`,
-                      method: "DELETE",
-                    });
-                    setPosts((prev) => {
-                      const abc = prev.filter(
-                        (current) => current.id !== blog.id,
-                      );
-                      return abc;
+                    showConfirm();
+                    setConfirmText("Do you really want to delete the post?");
+                    setAlertText("Warning: Deleted posts cannot be restored!");
+                    setTypeOfAlert("WARNING");
+                    setConfirmCallback(() => () => {
+                      fetchData({
+                        url: `http://localhost:3000/post/${blog.id}`,
+                        method: "DELETE",
+                      });
+                      setPosts((prev) => {
+                        const abc = prev.filter(
+                          (current) => current.id !== blog.id,
+                        );
+                        return abc;
+                      });
                     });
                   }}
                 />
@@ -119,7 +134,7 @@ function HomePage() {
             })}
           </div>
         </div>
-      </div>
+      </PageWrapper>
     </>
   );
 }

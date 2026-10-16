@@ -20,8 +20,8 @@ function Menu() {
   return (
     <>
       {location.pathname !== "/login" && location.pathname !== "/register" && (
-        <div className="navbar bg-base-100 shadow-sm">
-          <div className="navbar-start">
+        <div className="navbar bg-base-100 shadow-sm z-100 ps-5 pe-5">
+          <div className="navbar-start w-fulll">
             <div className="dropdown">
               <div
                 tabIndex={0}
@@ -50,41 +50,19 @@ function Menu() {
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
               >
                 <li>
-                  <a>Homepage</a>
+                  <Link to={"/"}>Home</Link>
                 </li>
                 <li>
-                  <a>Portfolio</a>
-                </li>
-                <li>
-                  <a>About</a>
+                  <a>User frontend</a>
                 </li>
               </ul>
             </div>
           </div>
+
           <div className="navbar-center">
-            <Link to="/" className="btn btn-ghost text-xl">
-              daisyUI
-            </Link>
+            <div className=" text-xl">CodingNews</div>
           </div>
           <div className="navbar-end">
-            <button className="btn btn-ghost btn-circle">
-              <svg
-                aria-label="Search"
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {" "}
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />{" "}
-              </svg>
-            </button>
             <div className="dropdown dropdown-end">
               <div
                 tabIndex={0}
@@ -103,16 +81,12 @@ function Menu() {
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
               >
                 <li>
-                  <a className="justify-between">
+                  <Link className="justify-between" to={"/profile"}>
                     Profile
-                    <span className="badge">New</span>
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a>Settings</a>
-                </li>
-                <li>
-                  <a onClick={logOut}>Logout</a>
+                  <button onClick={logOut}>Logout</button>
                 </li>
               </ul>
             </div>

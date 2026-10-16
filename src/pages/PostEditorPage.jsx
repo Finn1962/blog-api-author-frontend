@@ -1,11 +1,20 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate, useParams, useLocation } from "react-router";
-import RichTextEditor from "../Components/RichTextEditor.jsx";
-
+import { useNavigate, useParams, useLocation } from "react-router";
+import { useConfirm } from "../Contexts/ConfirmContext.jsx";
 import { useFetch } from "../hooks/useFetch.js";
+
+import PageWrapper from "../Components/PageWrapper.jsx";
+import RichTextEditor from "../Components/RichTextEditor.jsx";
 
 function PostEditorPage() {
   const location = useLocation();
+  const {
+    showConfirm,
+    setConfirmText,
+    setAlertText,
+    setConfirmCallback,
+    setTypeOfAlert,
+  } = useConfirm();
 
   const navigate = useNavigate();
   const { fetchData } = useFetch();
@@ -107,15 +116,21 @@ function PostEditorPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start xl:px-10 px-5 ">
-      <div className="pt-5 pb-10 flex justify-center flex-col w-full max-w-5xl gap-5 ">
-        <div className="flex items-start justify-between bg-base-100 p-3 rounded-md shadow-sm">
-          <Link
+    <PageWrapper>
+      <div className="pb-10 flex justify-center flex-col w-full max-w-5xl gap-5 ">
+        <div className="flex items-start justify-between bg-base-100 p-3 shadow-sm">
+          <button
             className="btn btn-outline font-normal border-base-300"
-            to={"/"}
+            onClick={() => {
+              setAlertText("Discarded posts cannot be restored.");
+              setConfirmText("Do you really want to discard the post?");
+              setTypeOfAlert("INFO");
+              setConfirmCallback(() => () => navigate("/"));
+              showConfirm();
+            }}
           >
             ← Discard
-          </Link>
+          </button>
           <div className="flex justify-center items-center gap-5">
             <button className="btn btn-outline font-normal border-base-300">
               Show preview
@@ -151,7 +166,7 @@ function PostEditorPage() {
           </div>
         </div>
 
-        <div className="bg-base-100 p-3 rounded-md shadow-sm flex flex-col gap-5 pb-5">
+        <div className="bg-base-100 p-3 shadow-sm flex flex-col gap-5 pb-5">
           <fieldset className="fieldset">
             <legend className="fieldset-legend ">Title</legend>
             <input
@@ -236,7 +251,7 @@ function PostEditorPage() {
           </fieldset>
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 }
 
