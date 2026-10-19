@@ -7,7 +7,6 @@ function ConfirmProvider({ children }) {
   const [confirmText, setConfirmText] = useState("");
   const [confirmCallback, setConfirmCallback] = useState(() => {});
   const [alertText, setAlertText] = useState("");
-  const [typeOfAlert, setTypeOfAlert] = useState("");
 
   function showConfirm() {
     setIsConfirmVisible(true);
@@ -20,8 +19,6 @@ function ConfirmProvider({ children }) {
   return (
     <ConfirmContext.Provider
       value={{
-        typeOfAlert,
-        setTypeOfAlert,
         isConfirmVisible,
         showConfirm,
         hideConfirm,

@@ -7,15 +7,14 @@ function ConfirmForm() {
     alertText,
     confirmCallback,
     hideConfirm,
-    typeOfAlert,
   } = useConfirm();
 
   return (
     <>
       {isConfirmVisible && (
-        <div className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center z-10">
+        <div className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center z-100">
           <fieldset className="flex flex-col gap-5 z-10 bg-base-100 p-5 ">
-            {typeOfAlert === "WARNING" && (
+            {alertText !== "" && (
               <div role="alert" className="alert alert-warning">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -34,26 +33,12 @@ function ConfirmForm() {
               </div>
             )}
 
-            {typeOfAlert === "INFO" && (
-              <div role="alert" className="alert alert-info">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  className="h-6 w-6 shrink-0 stroke-current"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-                <span>{alertText}</span>
-              </div>
-            )}
-
-            <p>{confirmText}</p>
+            <p
+              className="text-center
+"
+            >
+              {confirmText}
+            </p>
             <div className="flex flex-col gap-2">
               <button
                 className="btn btn-error"

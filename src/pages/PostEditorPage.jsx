@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
-import { useConfirm } from "../Contexts/ConfirmContext.jsx";
 import { useFetch } from "../hooks/useFetch.js";
 
 import PageWrapper from "../Components/PageWrapper.jsx";
@@ -8,13 +7,6 @@ import RichTextEditor from "../Components/RichTextEditor.jsx";
 
 function PostEditorPage() {
   const location = useLocation();
-  const {
-    showConfirm,
-    setConfirmText,
-    setAlertText,
-    setConfirmCallback,
-    setTypeOfAlert,
-  } = useConfirm();
 
   const navigate = useNavigate();
   const { fetchData } = useFetch();
@@ -80,7 +72,7 @@ function PostEditorPage() {
     formData.append("content", textEditorValue);
     formData.append("status", statusValue);
     formData.append("tags", tagsValue);
-    if (imageValue !== "") formData.append("image", imageValue);
+    formData.append("image", imageValue);
 
     fetchData({
       url: "http://localhost:3000/post",
@@ -121,15 +113,9 @@ function PostEditorPage() {
         <div className="flex items-start justify-between bg-base-100 p-3 shadow-sm">
           <button
             className="btn btn-outline font-normal border-base-300"
-            onClick={() => {
-              setAlertText("Discarded posts cannot be restored.");
-              setConfirmText("Do you really want to discard the post?");
-              setTypeOfAlert("INFO");
-              setConfirmCallback(() => () => navigate("/"));
-              showConfirm();
-            }}
+            onClick={() => navigate("/")}
           >
-            ← Discard
+            ← Back
           </button>
           <div className="flex justify-center items-center gap-5">
             <button className="btn btn-outline font-normal border-base-300">

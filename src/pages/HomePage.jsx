@@ -4,7 +4,6 @@ import { useLoader } from "../Contexts/LoaderContext.jsx";
 import { useFetch } from "../hooks/useFetch.js";
 import { useConfirm } from "../Contexts/ConfirmContext.jsx";
 import { debounce } from "../utils/debounce.js";
-
 import PageWrapper from "../Components/PageWrapper.jsx";
 import BlogPreview from "../Components/BlogPreview.jsx";
 import SearchBar from "../Components/SearchBar.jsx";
@@ -17,13 +16,8 @@ function HomePage() {
 
   const { setLoadingTrue, setLoadingFalse } = useLoader();
   const { fetchData } = useFetch();
-  const {
-    showConfirm,
-    setConfirmText,
-    setAlertText,
-    setTypeOfAlert,
-    setConfirmCallback,
-  } = useConfirm();
+  const { showConfirm, setConfirmText, setAlertText, setConfirmCallback } =
+    useConfirm();
 
   function fetchSearch() {
     fetchData({
@@ -115,7 +109,6 @@ function HomePage() {
                     showConfirm();
                     setConfirmText("Do you really want to delete the post?");
                     setAlertText("Warning: Deleted posts cannot be restored!");
-                    setTypeOfAlert("WARNING");
                     setConfirmCallback(() => () => {
                       fetchData({
                         url: `http://localhost:3000/post/${blog.id}`,
