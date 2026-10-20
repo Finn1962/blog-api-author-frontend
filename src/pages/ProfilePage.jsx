@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch.js";
+import { useFormChanges } from "../hooks/useFormChanges.js";
 import { useLoader } from "../Contexts/LoaderContext.jsx";
 import Loader from "../Components/Loader.jsx";
 import PageWrapper from "../Components/PageWrapper.jsx";
@@ -14,14 +15,13 @@ function ProfilePage() {
   const [newPasswordValue, setNewPasswordValue] = useState("");
   const [confirmNewPasswordValue, setConfirmNewPasswordValue] = useState("");
   const [emailNotificationValue, setEmailNotificationValue] = useState(false);
-  const [profileImageValue, setProfileImageValue] = useState(null);
+  const [profileImageValue, setProfileImageValue] = useState();
   const [errors, setErrors] = useState([]);
-  const [hasValuesChanged] = useState(true);
 
   const navigate = useNavigate();
-
   const { fetchData } = useFetch();
   const { setLoadingTrue, setLoadingFalse } = useLoader();
+  const { addInitialValues, addInitialValue, hasChanged } = useFormChanges();
 
   const profileImageRef = useRef(null);
 
@@ -46,6 +46,12 @@ function ProfilePage() {
           new Date(userData.created_at).toLocaleDateString("de-DE"),
         );
 
+        addInitialValues({
+          usernameValue: userData.username,
+          newPasswordValue: "",
+          emailNotificationValue: userData.email_notifications,
+        });
+
         if (userData.profile_image_url) {
           try {
             const response = await fetch(userData.profile_image_url);
@@ -59,6 +65,7 @@ function ProfilePage() {
             );
 
             setProfileImageValue(file);
+            addInitialValue("profileImageValue", file);
             if (profileImageRef.current) {
               const dataTransfer = new DataTransfer();
               dataTransfer.items.add(file);
@@ -91,7 +98,15 @@ function ProfilePage() {
           setCurrentPasswordValue("");
           setNewPasswordValue("");
           setConfirmNewPasswordValue("");
+          addInitialValues({
+            usernameValue: usernameValue,
+            newPasswordValue: "",
+            emailNotificationValue: emailNotificationValue,
+          });
+          if (profileImageValue)
+            addInitialValue("profileImageValue", profileImageValue);
         }
+
         if (result.errors) setErrors(result.errors);
         else setErrors([]);
       },
@@ -104,7 +119,7 @@ function ProfilePage() {
       <div className="w-full max-w-5xl bg-base-100">
         <button
           onClick={() => navigate(-1)}
-          className="btn btn-ghost bg-base-100 border-none"
+          className="btn bg-base-100 border-none"
         >
           ← Back
         </button>
@@ -113,9 +128,9 @@ function ProfilePage() {
             <div className="z-10 w-full h-full flex justify-center items-center aspect-square overflow-hidden relative">
               {imageSrc && (
                 <button
-                  className="btn btn-circle boder-base-100 p-2 w-10 absolute right-1 top-1 z-20"
+                  className="btn btn-circle boder-base-100 p-2 w-10 absolute right-5 top-5 z-20"
                   onClick={() => {
-                    setProfileImageValue(null);
+                    setProfileImageValue();
                     profileImageRef.current.value = null;
                   }}
                 >
@@ -131,10 +146,10 @@ function ProfilePage() {
               )}
               <label
                 htmlFor="profile_image"
-                className="h-full absolute top-0 left-0 bottom-0 right-0 z-10 cursor-pointer hover:bg-secondary opacity-20 "
+                className="h-full absolute top-0 left-0 bottom-0 right-0 z-10 cursor-pointer hover:bg-base-300 opacity-10 "
               ></label>
               <input
-                className="hidden"
+                className="hidden "
                 type="file"
                 ref={profileImageRef}
                 onChange={(event) =>
@@ -145,11 +160,11 @@ function ProfilePage() {
               {imageSrc ? (
                 <img src={imageSrc} className="object-cover h-full w-full" />
               ) : (
-                <div className="h-full bg-base-200 p-2">
+                <div className="h-full bg-accent p-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
-                    className="bi bi-person-fill h-full opacity-20"
+                    className="bi bi-person-fill h-full invert opacity-20"
                     viewBox="0 0 16 16"
                   >
                     <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
@@ -169,7 +184,7 @@ function ProfilePage() {
                   <legend className="fieldset-legend">Username</legend>
                   <input
                     type="text"
-                    className="input w-full"
+                    className="input w-full bg-base-300"
                     placeholder="Max"
                     value={usernameValue}
                     onChange={(event) => setUsernameValue(event.target.value)}
@@ -186,7 +201,7 @@ function ProfilePage() {
                   <legend className="fieldset-legend">Current password</legend>
                   <input
                     type="password"
-                    className="input w-full"
+                    className="input w-full bg-base-300"
                     placeholder="⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅"
                     value={currentPasswordValue}
                     onChange={(event) =>
@@ -208,7 +223,7 @@ function ProfilePage() {
                   <legend className="fieldset-legend">New password</legend>
                   <input
                     type="password"
-                    className="input w-full"
+                    className="input w-full bg-base-300"
                     placeholder="⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅"
                     value={newPasswordValue}
                     onChange={(event) =>
@@ -239,7 +254,7 @@ function ProfilePage() {
                   </legend>
                   <input
                     type="password"
-                    className="input w-full"
+                    className="input w-full bg-base-300"
                     placeholder="⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅"
                     value={confirmNewPasswordValue}
                     onChange={(event) =>
@@ -277,7 +292,16 @@ function ProfilePage() {
                 <fieldset className="fieldset">
                   <button
                     className="btn btn-block btn-primary"
-                    disabled={hasValuesChanged ? false : true}
+                    disabled={
+                      hasChanged({
+                        usernameValue,
+                        newPasswordValue,
+                        emailNotificationValue,
+                        profileImageValue,
+                      })
+                        ? false
+                        : true
+                    }
                     onClick={uploadProfileData}
                   >
                     Save changes

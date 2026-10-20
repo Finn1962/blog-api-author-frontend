@@ -1,6 +1,6 @@
 function ToggleSwitch({ emailNotificationValue, setEmailNotificationValue }) {
   return (
-    <label className="toggle text-base-content">
+    <label className="toggle text-base-content border">
       <input
         type="checkbox"
         className={`bg-${emailNotificationValue === true ? "primary" : "secondary"}`}

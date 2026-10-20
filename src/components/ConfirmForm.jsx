@@ -49,7 +49,7 @@ function ConfirmForm() {
               >
                 Yes
               </button>
-              <button className="btn  btn-outline" onClick={hideConfirm}>
+              <button className="btn border btn-outline" onClick={hideConfirm}>
                 No
               </button>
             </div>

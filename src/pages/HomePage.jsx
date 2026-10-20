@@ -53,7 +53,7 @@ function HomePage() {
             <div className=" flex justify-between items-center gap-5">
               <div className="filter flex-nowrap">
                 <input
-                  className="btn btn-outline  border-base-300"
+                  className="btn btn border-base-300 "
                   type="checkbox"
                   name="frameworks"
                   value="PUBLIC"
@@ -66,7 +66,7 @@ function HomePage() {
                   }
                 />
                 <input
-                  className="btn btn-outline border-base-300"
+                  className="btn btn border-base-300 "
                   type="checkbox"
                   name="frameworks"
                   value="DRAFT"
@@ -80,7 +80,7 @@ function HomePage() {
                 />
               </div>
               <SearchBar
-                className="join w-full max-w-300 md:flex hidden"
+                className="join w-full max-w-300 md:flex hidden "
                 searchValue={searchValue}
                 setSearchValue={setSearchValue}
                 fetchSearch={fetchSearch}

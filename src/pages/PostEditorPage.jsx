@@ -112,13 +112,13 @@ function PostEditorPage() {
       <div className="pb-10 flex justify-center flex-col w-full max-w-5xl gap-5 ">
         <div className="flex items-start justify-between bg-base-100 p-3 shadow-sm">
           <button
-            className="btn btn-outline font-normal border-base-300"
+            className="btn font-normal border-base-300 "
             onClick={() => navigate("/")}
           >
             ← Back
           </button>
           <div className="flex justify-center items-center gap-5">
-            <button className="btn btn-outline font-normal border-base-300">
+            <button className="btn  font-normal border-base-300 ">
               Show preview
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -133,7 +133,7 @@ function PostEditorPage() {
               </svg>
             </button>
             <select
-              className="select font-normal border-base-300"
+              className="select font-normal border-base-300 bg-base-300"
               value={statusValue}
               onChange={(event) => setStatusValue(event.target.value)}
             >
@@ -157,7 +157,7 @@ function PostEditorPage() {
             <legend className="fieldset-legend ">Title</legend>
             <input
               type="text"
-              className="input w-full"
+              className="input w-full bg-base-300"
               placeholder="My awesome Post"
               value={titleValue}
               onChange={(event) => setTitleValue(event.target.value)}
@@ -185,12 +185,12 @@ function PostEditorPage() {
             <legend className="fieldset-legend pt-0 pb-2">Image</legend>
             <input
               type="file"
-              className="file-input w-full mb-1"
+              className="file-input w-full mb-1 bg-neutral"
               onChange={(event) => setImageValue(event.target.files[0])}
               ref={fileInputRef}
             />
             {imageSrc && (
-              <div className="w-full max-w-100 border rounded-lg border-base-300 mb-1 relative min-h-25">
+              <div className="w-full max-w-100 border rounded-lg border-base-300 mb-1 relative min-h-25 ">
                 <button
                   className="btn btn-circle boder-base-100 p-2 w-10 absolute right-1 top-1"
                   onClick={() => {
@@ -228,7 +228,7 @@ function PostEditorPage() {
           <fieldset className="fieldset">
             <legend className="fieldset-legend">Tags</legend>
             <textarea
-              className="textarea h-24 w-full"
+              className="textarea h-24 w-full bg-base-300"
               placeholder=""
               value={tagsValue}
               onChange={(event) => setTagsValue(event.target.value)}

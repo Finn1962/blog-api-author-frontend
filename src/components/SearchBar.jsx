@@ -1,8 +1,8 @@
 function SearchBar({ className, searchValue, setSearchValue, fetchSearch }) {
   return (
-    <div className={className}>
+    <div className={`${className} flex gap-1`}>
       <input
-        className="input join-item w-full border-e-0"
+        className="input join-item w-full border-e-0 border-base-300 bg-base-300"
         placeholder="Search"
         value={searchValue}
         onChange={(event) => {
@@ -12,7 +12,7 @@ function SearchBar({ className, searchValue, setSearchValue, fetchSearch }) {
 
       <div className="indicator">
         <button
-          className="btn btn-outline border-base-300 font-regular w-25"
+          className="btn btn border-base-300 font-regular w-25"
           onClick={fetchSearch}
         >
           Search

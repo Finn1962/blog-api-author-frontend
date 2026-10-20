@@ -3,35 +3,35 @@
 
 @plugin "daisyui/theme" {
   name: "wireframe";
-  default: true;
+  default: false;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(95% 0 0);
-  --color-base-300: oklch(92% 0 0);
-  --color-base-content: oklch(20% 0 0);
-  --color-primary: oklch(45% 0.24 277.023);
-  --color-primary-content: oklch(98% 0.003 247.858);
-  --color-secondary: oklch(12% 0.042 264.695);
+  --color-base-100: oklch(25% 0.042 265.755);
+  --color-base-200: oklch(18% 0.042 264.695);
+  --color-base-300: oklch(18% 0.042 264.695);
+  --color-base-content: oklch(98% 0.003 247.858);
+  --color-primary: oklch(90% 0.182 98.111);
+  --color-primary-content: oklch(12% 0.042 264.695);
+  --color-secondary: oklch(98% 0.003 247.858);
   --color-secondary-content: oklch(98% 0.003 247.858);
-  --color-accent: oklch(92% 0 0);
+  --color-accent: oklch(95% 0 0);
   --color-accent-content: oklch(26% 0 0);
-  --color-neutral: oklch(92% 0 0);
+  --color-neutral: oklch(20% 0.042 265.755);
   --color-neutral-content: oklch(26% 0 0);
-  --color-info: oklch(58% 0.158 241.966);
+  --color-info: oklch(74% 0.16 232.661);
   --color-info-content: oklch(95% 0.026 236.824);
   --color-success: oklch(52% 0.154 150.069);
   --color-success-content: oklch(96% 0.044 156.743);
-  --color-warning: oklch(66% 0.179 58.318);
+  --color-warning: oklch(76% 0.188 70.08);
   --color-warning-content: oklch(96% 0.059 95.617);
-  --color-error: oklch(50% 0.213 27.518);
+  --color-error: oklch(63% 0.237 25.331);
   --color-error-content: oklch(93% 0.032 17.717);
   --radius-selector: 0rem;
   --radius-field: 0rem;
   --radius-box: 0rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 0.5px;
+  --border: 0px;
   --depth: 0;
   --noise: 0;
 }
@@ -40,17 +40,39 @@
   height: 400px;
 }
 
+.ql-picker-options {
+  background-color: var(--color-base-300) !important;
+}
+
 .ql-toolbar.ql-snow {
   border-bottom: none;
+  border: none !important;
+  background-color: var(--color-base-300);
 }
 
 .ql-container.ql-snow {
-  background-color: #fff;
+  background-color: var(--color-base-300);
+  border: none !important;
   height: calc(100% - 42px);
 }
 
 .quill:has(.ql-editor:focus) {
-  outline: 2px solid #000000;
+  outline: 2px solid var(--color-secondary);
   outline-offset: 3px;
-  border-radius: 5px;
+}
+
+.ql-snow .ql-stroke {
+  stroke: var(--color-secondary) !important; /* Ihre Wunschfarbe für Linien */
+}
+
+.ql-snow .ql-fill {
+  fill: var(
+    --color-secondary
+  ) !important; /* Ihre Wunschfarbe für gefüllte Flächen */
+}
+
+.ql-snow .ql-picker {
+  color: var(
+    --color-secondary
+  ) !important; /* Farbe für Dropdown-Text und Pfeile */
 }
