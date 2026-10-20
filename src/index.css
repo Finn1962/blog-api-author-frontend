@@ -3,12 +3,12 @@
 
 @plugin "daisyui/theme" {
   name: "wireframe";
-  default: false;
-  prefersdark: false;
-  color-scheme: "light";
+  default: true;
+  prefersdark: true;
+  color-scheme: "dark";
   --color-base-100: oklch(25% 0.042 265.755);
-  --color-base-200: oklch(18% 0.042 264.695);
-  --color-base-300: oklch(18% 0.042 264.695);
+  --color-base-200: oklch(16% 0.042 264.695);
+  --color-base-300: oklch(16% 0.042 264.695);
   --color-base-content: oklch(98% 0.003 247.858);
   --color-primary: oklch(90% 0.182 98.111);
   --color-primary-content: oklch(12% 0.042 264.695);
@@ -34,6 +34,19 @@
   --border: 0px;
   --depth: 0;
   --noise: 0;
+}
+
+@keyframes topSlideIn {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.top-slide-in {
+  animation: topSlideIn 0.2s ease-out forwards;
 }
 
 .quill {

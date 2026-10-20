@@ -13,7 +13,7 @@ function ConfirmForm() {
     <>
       {isConfirmVisible && (
         <div className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center z-100">
-          <fieldset className="flex flex-col gap-5 z-10 bg-base-100 p-5 ">
+          <fieldset className="flex flex-col gap-5 z-10 bg-base-200 p-5 ">
             {alertText !== "" && (
               <div role="alert" className="alert alert-warning">
                 <svg

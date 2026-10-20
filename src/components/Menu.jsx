@@ -1,8 +1,22 @@
 import { useLocation, useNavigate, Link } from "react-router";
+import { useState, useEffect } from "react";
+import { useFetch } from "../hooks/useFetch.js";
 
 function Menu() {
+  const [profile, setProfile] = useState(null);
+
   const navigate = useNavigate();
   const location = useLocation();
+  const { fetchData } = useFetch();
+
+  useEffect(() => {
+    fetchData({
+      url: "http://localhost:3000/profile",
+      callback: (result) => {
+        setProfile(result.userData);
+      },
+    });
+  }, []);
 
   function logOut() {
     fetch("http://localhost:3000/logout", {
@@ -70,10 +84,12 @@ function Menu() {
                 className="btn btn-ghost btn-circle avatar"
               >
                 <div className="w-10 rounded-full">
-                  <img
-                    alt="Tailwind CSS Navbar component"
-                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                  />
+                  {profile && (
+                    <img
+                      alt="Tailwind CSS Navbar component"
+                      src={profile?.profile_image_url}
+                    />
+                  )}
                 </div>
               </div>
               <ul
