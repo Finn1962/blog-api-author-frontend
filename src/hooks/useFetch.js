@@ -33,7 +33,7 @@ function useFetch() {
         response = await fetch(url, {
           method,
           credentials: "include",
-          body: hasBody ? JSON.stringify(body) : null,
+          body: hasBody ? (stringifyBody ? JSON.stringify(body) : body) : null,
         });
       }
 

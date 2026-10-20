@@ -7,11 +7,11 @@ function Loader({ className }) {
     <>
       {isLoading ? (
         <span
-          className={`loading loading-spinner loading-md ${className}`}
+          className={`loading loading-spinner loading-md ${className} `}
         ></span>
       ) : (
         <span
-          className={`hidden loading loading-spinner loading-md ${className}`}
+          className={`hidden loading loading-spinner loading-md ${className} `}
         ></span>
       )}
     </>

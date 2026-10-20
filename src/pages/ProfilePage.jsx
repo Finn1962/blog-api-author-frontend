@@ -1,16 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch.js";
+import { useLoader } from "../Contexts/LoaderContext.jsx";
+import Loader from "../Components/Loader.jsx";
 import PageWrapper from "../Components/PageWrapper.jsx";
 import ToggleSwitch from "../Components/ToggleSwitch.jsx";
-
-const initialValues = {
-  username: "",
-  newPassword: "",
-  confirmNewPassword: "",
-  emailNotification: false,
-  profileImage: null,
-};
 
 function ProfilePage() {
   const [roleValue, setRoleValue] = useState("");
@@ -21,10 +15,13 @@ function ProfilePage() {
   const [confirmNewPasswordValue, setConfirmNewPasswordValue] = useState("");
   const [emailNotificationValue, setEmailNotificationValue] = useState(false);
   const [profileImageValue, setProfileImageValue] = useState(null);
+  const [errors, setErrors] = useState([]);
+  const [hasValuesChanged] = useState(true);
 
   const navigate = useNavigate();
 
   const { fetchData } = useFetch();
+  const { setLoadingTrue, setLoadingFalse } = useLoader();
 
   const profileImageRef = useRef(null);
 
@@ -32,43 +29,11 @@ function ProfilePage() {
     ? URL.createObjectURL(profileImageValue)
     : null;
 
-  function hasValuesChanged() {
-    if (
-      initialValues.username !== usernameValue ||
-      initialValues.newPassword !== newPasswordValue ||
-      initialValues.confirmNewPassword !== confirmNewPasswordValue ||
-      initialValues.emailNotification !== emailNotificationValue ||
-      initialValues.profileImage !== profileImageValue
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  function fetchProfileData() {
-    const formData = new FormData();
-    formData.append("username", usernameValue);
-    formData.append("currentPassword", currentPasswordValue);
-    formData.append("newPassword", newPasswordValue);
-    formData.append("confirmNewPassword", confirmNewPasswordValue);
-    formData.append("emailNotification", emailNotificationValue);
-    formData.append("profileImage", profileImageValue);
-
-    fetchData({
-      url: "http://localhost:3000/profile",
-      method: "PUT",
-      body: formData,
-      stringifyBody: false,
-      callback: (result) => {
-        console.log(result);
-      },
-    });
-  }
-
   useEffect(() => {
     fetchData({
       url: "http://localhost:3000/profile",
+      setLoadingTrue,
+      setLoadingFalse,
       callback: async (result) => {
         const { userData } = result;
         setRoleValue(
@@ -76,26 +41,24 @@ function ProfilePage() {
             userData.role.slice(1).toLowerCase(),
         );
         setUsernameValue(userData.username);
-        initialValues.username = userData.username;
         setEmailNotificationValue(userData.email_notifications);
-        initialValues.emailNotification = userData.email_notifications;
         setCreatedAtValue(
           new Date(userData.created_at).toLocaleDateString("de-DE"),
         );
 
-        if (userData.profile_image_path) {
+        if (userData.profile_image_url) {
           try {
-            const response = await fetch(userData.post.profile_image_path);
+            const response = await fetch(userData.profile_image_url);
             const blob = await response.blob();
             const file = new File(
               [blob],
-              userData.post.image_path || "image.jpg",
+              userData.profile_image_url || "image.jpg",
               {
                 type: blob.type,
               },
             );
+
             setProfileImageValue(file);
-            initialValues.profileImage = file;
             if (profileImageRef.current) {
               const dataTransfer = new DataTransfer();
               dataTransfer.items.add(file);
@@ -109,8 +72,35 @@ function ProfilePage() {
     });
   }, []);
 
+  function uploadProfileData() {
+    const formData = new FormData();
+    formData.append("username", usernameValue);
+    formData.append("currentPassword", currentPasswordValue);
+    formData.append("newPassword", newPasswordValue);
+    formData.append("confirmNewPassword", confirmNewPasswordValue);
+    formData.append("emailNotifications", emailNotificationValue);
+    formData.append("image", profileImageValue);
+
+    fetchData({
+      url: "http://localhost:3000/profile",
+      method: "PUT",
+      body: formData,
+      stringifyBody: false,
+      callback: (result) => {
+        if (result.message === "User data successfully changed") {
+          setCurrentPasswordValue("");
+          setNewPasswordValue("");
+          setConfirmNewPasswordValue("");
+        }
+        if (result.errors) setErrors(result.errors);
+        else setErrors([]);
+      },
+    });
+  }
+
   return (
     <PageWrapper>
+      <Loader className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-100" />
       <div className="w-full max-w-5xl bg-base-100">
         <button
           onClick={() => navigate(-1)}
@@ -170,7 +160,7 @@ function ProfilePage() {
             <div className="flex flex-col justify-between items-start gap-4">
               <div className="flex justify-between items-center w-full">
                 <p className="text-primary font-semibold">{roleValue}</p>
-                <p className="text-sm opacity-50">
+                <p className="text-xs opacity-35">
                   Member since: {createdAtValue}
                 </p>
               </div>
@@ -184,6 +174,13 @@ function ProfilePage() {
                     value={usernameValue}
                     onChange={(event) => setUsernameValue(event.target.value)}
                   />
+                  {errors.some(
+                    (error) => error.msg === "Username is required",
+                  ) && (
+                    <p className="text-error font-semibold">
+                      Username is required
+                    </p>
+                  )}
                 </fieldset>
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Current password</legend>
@@ -196,6 +193,16 @@ function ProfilePage() {
                       setCurrentPasswordValue(event.target.value)
                     }
                   />
+                  {errors.some(
+                    (error) => error.msg === "Current passwords is required",
+                  ) && (
+                    <p className="text-error font-semibold">
+                      Current passwords is required
+                    </p>
+                  )}
+                  {errors.some((error) => error.msg === "Wrong password") && (
+                    <p className="text-error font-semibold">Wrong password</p>
+                  )}
                 </fieldset>
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">New password</legend>
@@ -208,6 +215,23 @@ function ProfilePage() {
                       setNewPasswordValue(event.target.value)
                     }
                   />
+
+                  {errors.some(
+                    (error) => error.msg === "New password is required",
+                  ) && (
+                    <p className="text-error font-semibold">
+                      New password is required
+                    </p>
+                  )}
+                  {errors.some(
+                    (error) =>
+                      error.msg ===
+                      "New password must be between 8 and 32 characters",
+                  ) && (
+                    <p className="text-error font-semibold">
+                      New password must be between 8 and 32 characters
+                    </p>
+                  )}
                 </fieldset>
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">
@@ -222,6 +246,20 @@ function ProfilePage() {
                       setConfirmNewPasswordValue(event.target.value)
                     }
                   />
+                  {errors.some(
+                    (error) => error.msg === "New password must be confirmed",
+                  ) && (
+                    <p className="text-error font-semibold">
+                      New password must be confirmed
+                    </p>
+                  )}
+                  {errors.some(
+                    (error) => error.msg === "New password must match",
+                  ) && (
+                    <p className="text-error font-semibold">
+                      New password must match
+                    </p>
+                  )}
                 </fieldset>
               </div>
               <div className="w-full">
@@ -239,8 +277,8 @@ function ProfilePage() {
                 <fieldset className="fieldset">
                   <button
                     className="btn btn-block btn-primary"
-                    disabled={hasValuesChanged() ? false : true}
-                    onClick={fetchProfileData}
+                    disabled={hasValuesChanged ? false : true}
+                    onClick={uploadProfileData}
                   >
                     Save changes
                   </button>
