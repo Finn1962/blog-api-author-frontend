@@ -209,7 +209,7 @@ function PostEditorPage() {
                 </button>
                 <img
                   src={imageSrc}
-                  className="object-cover w-full max-h-150 rounded-lg "
+                  className="object-cover w-full max-h-150  "
                 />
               </div>
             )}

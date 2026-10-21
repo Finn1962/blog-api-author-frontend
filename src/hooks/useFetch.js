@@ -29,6 +29,7 @@ function useFetch() {
           "http://localhost:3000/login/refresh",
           { credentials: "include" },
         );
+        console.log(refreshResponse.status);
         if (refreshResponse.status === 401) return navigate("/login");
         response = await fetch(url, {
           method,

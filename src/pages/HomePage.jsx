@@ -15,8 +15,8 @@ function HomePage() {
   const [statusFilterValue, setStatusFilterValue] = useState("ALL");
   const [scrollPosition, setScrollPosition] = useState(0);
   const [currentPaginationNumber, setCurrentPaginationNumber] = useState(0);
-  const elementsOnEachSlide = 5;
-  const paginationTotalNumber = Math.ceil(posts.length / elementsOnEachSlide);
+  const [paginationTotalNumber, setPaginationTotalNumber] = useState(0);
+  const elementsOnEachSlide = 10;
 
   const { setLoadingTrue, setLoadingFalse } = useLoader();
   const { fetchData } = useFetch();
@@ -25,15 +25,23 @@ function HomePage() {
 
   function fetchSearch() {
     fetchData({
-      url: `http://localhost:3000/post/search?searchValue=${searchValue}&status=${statusFilterValue}`,
+      url: `http://localhost:3000/post?searchValue=${searchValue}&status=${statusFilterValue}&skip=${currentPaginationNumber * elementsOnEachSlide}&take=${elementsOnEachSlide}`,
       setLoadingTrue,
       setLoadingFalse,
       callback: (result) => {
         setPosts(result.posts);
+        setPaginationTotalNumber(
+          Math.ceil(result.totalPostsNumber / elementsOnEachSlide),
+        );
       },
     });
-    setCurrentPaginationNumber(0);
   }
+
+  useEffect(fetchSearch, [statusFilterValue, currentPaginationNumber]); // eslint-disable-line
+  useEffect(() => {
+    debounce(fetchSearch);
+    setCurrentPaginationNumber(0); // eslint-disable-line
+  }, [searchValue]);
 
   useEffect(() => {
     function handleScroll() {
@@ -45,24 +53,6 @@ function HomePage() {
       document.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
-  useEffect(() => {
-    fetchData({
-      url: "http://localhost:3000/post",
-      setLoadingTrue,
-      setLoadingFalse,
-      callback: (result) => {
-        setPosts(result.posts);
-      },
-    });
-  }, []);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [currentPaginationNumber]);
-
-  useEffect(fetchSearch, [statusFilterValue]); // eslint-disable-line
-  useEffect(() => debounce(fetchSearch), [searchValue]);
 
   return (
     <>
@@ -87,39 +77,31 @@ function HomePage() {
             />
           )}
           <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sd:grid-cols-1 gap-5  pb-5">
-            {posts
-              ?.slice(
-                currentPaginationNumber * elementsOnEachSlide,
-                currentPaginationNumber * elementsOnEachSlide +
-                  elementsOnEachSlide,
-              )
-              .map((blog) => {
-                return (
-                  <BlogPreview
-                    blog={blog}
-                    key={blog.id}
-                    onDelete={() => {
-                      showConfirm();
-                      setConfirmText("Do you really want to delete the post?");
-                      setAlertText(
-                        "Warning: Deleted posts cannot be restored!",
-                      );
-                      setConfirmCallback(() => () => {
-                        fetchData({
-                          url: `http://localhost:3000/post/${blog.id}`,
-                          method: "DELETE",
-                        });
-                        setPosts((prev) => {
-                          const abc = prev.filter(
-                            (current) => current.id !== blog.id,
-                          );
-                          return abc;
-                        });
+            {posts.map((blog) => {
+              return (
+                <BlogPreview
+                  blog={blog}
+                  key={blog.id}
+                  onDelete={() => {
+                    showConfirm();
+                    setConfirmText("Do you really want to delete the post?");
+                    setAlertText("Warning: Deleted posts cannot be restored!");
+                    setConfirmCallback(() => () => {
+                      fetchData({
+                        url: `http://localhost:3000/post/${blog.id}`,
+                        method: "DELETE",
                       });
-                    }}
-                  />
-                );
-              })}
+                      setPosts((prev) => {
+                        const abc = prev.filter(
+                          (current) => current.id !== blog.id,
+                        );
+                        return abc;
+                      });
+                    });
+                  }}
+                />
+              );
+            })}
           </div>
 
           <div className="join">
