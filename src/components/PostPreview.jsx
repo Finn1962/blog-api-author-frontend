@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router";
 
-function BlogPreview({ blog, onDelete }) {
+function PostPreview({ post, onDelete }) {
   return (
     <div className="card bg-base-100 shadow-sm ">
       <div className="flex justify-start items-center gap-1 p-3">
         <DeleteButton onDelete={onDelete} />
-        <EditButton blogId={blog.id} />
+        <EditButton blogId={post.id} />
       </div>
-      {blog.image_url ? (
+      {post.image_url ? (
         <figure>
           <img
-            src={blog.image_url}
+            src={post.image_url}
             alt="Shoes"
             className="h-65 w-full object-cover"
           />
@@ -31,26 +31,26 @@ function BlogPreview({ blog, onDelete }) {
       )}
       <div className="card-body flex justify-between flex-col">
         <div className="flex justify-between items-start gap-8">
-          <h2 className="card-title">{blog.title}</h2>
+          <h2 className="card-title">{post.title}</h2>
           <p
             className={`text-end font-semibold ${
-              blog.status === "PUBLIC" ? "text-info" : "text-error"
+              post.status === "PUBLIC" ? "text-info" : "text-error"
             }`}
           >
-            {blog.status}
+            {post.status}
           </p>
         </div>
 
         <div
           dangerouslySetInnerHTML={{
-            __html: blog.content.slice(0, 40) + "...",
+            __html: post.content.slice(0, 40) + "...",
           }}
         />
 
         <div>
           <div className="flex gap-2 justify-start items-start flex-wrap mb-1">
-            {blog.tags.length >= 1 &&
-              blog.tags.map((tag) => {
+            {post.tags.length >= 1 &&
+              post.tags.map((tag) => {
                 return <Tag tag={tag} key={tag.id} />;
               })}
           </div>
@@ -141,4 +141,4 @@ function Tag({ tag }) {
   return <span className="badge badge-primary">{tag.content}</span>;
 }
 
-export default BlogPreview;
+export default PostPreview;

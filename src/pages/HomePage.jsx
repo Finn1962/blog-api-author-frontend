@@ -5,7 +5,7 @@ import { useFetch } from "../hooks/useFetch.js";
 import { useConfirm } from "../Contexts/ConfirmContext.jsx";
 import { debounce } from "../utils/debounce.js";
 import PageWrapper from "../Components/PageWrapper.jsx";
-import BlogPreview from "../Components/BlogPreview.jsx";
+import PostPreview from "../Components/PostPreview.jsx";
 import SearchBar from "../Components/SearchBar.jsx";
 import Loader from "../Components/Loader.jsx";
 
@@ -77,23 +77,23 @@ function HomePage() {
             />
           )}
           <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sd:grid-cols-1 gap-5  pb-5">
-            {posts.map((blog) => {
+            {posts.map((post) => {
               return (
-                <BlogPreview
-                  blog={blog}
-                  key={blog.id}
+                <PostPreview
+                  post={post}
+                  key={post.id}
                   onDelete={() => {
                     showConfirm();
                     setConfirmText("Do you really want to delete the post?");
                     setAlertText("Warning: Deleted posts cannot be restored!");
                     setConfirmCallback(() => () => {
                       fetchData({
-                        url: `http://localhost:3000/post/${blog.id}`,
+                        url: `http://localhost:3000/post/${post.id}`,
                         method: "DELETE",
                       });
                       setPosts((prev) => {
                         const abc = prev.filter(
-                          (current) => current.id !== blog.id,
+                          (current) => current.id !== post.id,
                         );
                         return abc;
                       });
