@@ -7,7 +7,7 @@ import Loader from "../Components/Loader.jsx";
 function LogInPage() {
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const { isLoading, setLoadingTrue, setLoadingFalse } = useLoader();
 
@@ -25,10 +25,11 @@ function LogInPage() {
         body: JSON.stringify({
           email: emailValue,
           password: passwordValue,
+          portal: "AUTHOR",
         }),
       });
       const result = await response.json();
-      setMessage(result.message);
+      setError(result.errors ? result.errors[0] : "");
       if (result.message === "Login successful") navigate("/");
     } catch (error) {
       console.error(error);
@@ -67,12 +68,7 @@ function LogInPage() {
           {isLoading ? <Loader /> : "Login"}
         </button>
 
-        {message !== "" &&
-          (message === "Login successful" ? (
-            <p className="text-success font-bold mt-1">{message}</p>
-          ) : (
-            <p className="text-error font-bold mt-1">{message}</p>
-          ))}
+        {error !== "" && <p className="text-error font-bold mt-1">{error}</p>}
       </fieldset>
     </div>
   );

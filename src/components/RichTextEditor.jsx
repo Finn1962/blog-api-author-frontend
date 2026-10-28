@@ -3,18 +3,24 @@ import "react-quill-new/dist/quill.snow.css";
 
 const modules = {
   toolbar: [
-    // Dropdown für Überschriften und normalen Text
     [{ header: [1, 2, 3, false] }],
     ["bold", "italic", "underline"],
-    [{ list: "ordered" }, { list: "bullet" }], // Listen
+    [{ list: "ordered" }, { list: "bullet" }],
     ["clean"],
-    ["code-block"], // Button für mehrzeilige Code-Blöcke (<pre>)
+    ["code-block"],
     ["link"],
   ],
 };
 
-// 2. Formate registrieren
-const formats = ["header", "bold", "italic", "underline", "link", "code-block"];
+const formats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "link",
+  "code-block",
+  "list",
+];
 
 function RichTextEditor({ textEditorValue, setTextEditorValue }) {
   return (

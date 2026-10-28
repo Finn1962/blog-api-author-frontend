@@ -25,6 +25,7 @@ function PostEditorPage() {
   const [titleValue, setTitleValue] = useState("");
   const [textEditorValue, setTextEditorValue] = useState("");
   const [tagsValue, setTagsValue] = useState("");
+  const [progLangValue, setProgLangValue] = useState("JAVA_SCRIPT");
   const [errors, setErrors] = useState([]);
   const [imageValue, setImageValue] = useState(null);
   const imageSrc = imageValue ? URL.createObjectURL(imageValue) : null;
@@ -39,6 +40,7 @@ function PostEditorPage() {
         setStatusValue(result.post.status);
         setTitleValue(result.post.title);
         setTextEditorValue(result.post.content);
+        setProgLangValue(result.post.prog_lang);
         setTagsValue(result.post.tags.map((tag) => tag.content).join(", "));
 
         if (result.post.image_url) {
@@ -66,13 +68,14 @@ function PostEditorPage() {
     });
   }, []);
 
-  function fetchNewPostData() {
+  function uploadNewPostData() {
     const formData = new FormData();
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
     formData.append("status", statusValue);
     formData.append("tags", tagsValue);
     formData.append("image", imageValue);
+    formData.append("progLang", progLangValue);
 
     fetchData({
       url: "http://localhost:3000/post",
@@ -86,13 +89,14 @@ function PostEditorPage() {
     });
   }
 
-  function fetchUpdatedPostData() {
+  function uploadUpdatedPostData() {
     const formData = new FormData();
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
     formData.append("status", statusValue);
     formData.append("tags", tagsValue);
     formData.append("id", postId);
+    formData.append("progLang", progLangValue);
     if (imageValue !== "") formData.append("image", imageValue);
 
     fetchData({
@@ -143,8 +147,8 @@ function PostEditorPage() {
             <button
               className="btn btn btn-primary"
               onClick={() => {
-                if (mode === "new") fetchNewPostData();
-                else fetchUpdatedPostData();
+                if (mode === "new") uploadNewPostData();
+                else uploadUpdatedPostData();
               }}
             >
               Save
@@ -180,6 +184,29 @@ function PostEditorPage() {
                 Content cannot be empty
               </p>
             )}
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend ">Programming language</legend>
+            <select
+              className="select [&::picker(select)]:max-h-75 font-normal border-base-300 bg-base-300"
+              value={progLangValue}
+              onChange={(event) => setProgLangValue(event.target.value)}
+            >
+              <option value="JAVA_SCRIPT">JavaScript</option>
+              <option value="HTML">HTML</option>
+              <option value="CSS">CSS</option>
+              <option value="TYPE_SCRIPT">TypeScript</option>
+              <option value="PYTHON">Python</option>
+              <option value="SQL">SQL</option>
+              <option value="GO">GO</option>
+              <option value="RUST">Rust</option>
+              <option value="RUBY">Ruby</option>
+              <option value="PHP">PHP</option>
+              <option value="JAVA">Java</option>
+              <option value="C">C</option>
+              <option value="C_PLUS_PLUS">C++</option>
+              <option value="C_SHARP">C#</option>
+            </select>
           </fieldset>
           <fieldset className="fieldset">
             <legend className="fieldset-legend pt-0 pb-2">Image</legend>
