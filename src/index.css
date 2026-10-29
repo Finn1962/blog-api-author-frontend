@@ -1,11 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fragment+Mono:ital@0;1&display=swap");
 @import "tailwindcss";
 @plugin "daisyui";
+
+@theme {
+  --font-heading: "Fragment Mono", Georgia, serif;
+}
 
 @plugin "daisyui/theme" {
   name: "wireframe";
   default: true;
   prefersdark: true;
   color-scheme: "dark";
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
   --color-base-100: oklch(25% 0.042 265.755);
   --color-base-200: oklch(16% 0.042 264.695);
   --color-base-300: oklch(16% 0.042 264.695);

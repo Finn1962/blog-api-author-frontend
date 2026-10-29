@@ -67,14 +67,22 @@ function Menu() {
                   <Link to={"/"}>Home</Link>
                 </li>
                 <li>
-                  <a>User frontend</a>
+                  <a
+                    href="http://localhost:5000/"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    User frontend
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
 
           <div className="navbar-center">
-            <div className=" text-xl">CodingNews</div>
+            <Link to="/" className="btn btn-ghost text-xl font-heading">
+              .codersBackend
+            </Link>
           </div>
           <div className="navbar-end">
             <div className="dropdown dropdown-end">
