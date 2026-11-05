@@ -68,7 +68,7 @@ function PostEditorPage() {
     });
   }, []);
 
-  function uploadNewPostData() {
+  async function uploadNewPostData(callback = () => {}) {
     const formData = new FormData();
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
@@ -77,19 +77,19 @@ function PostEditorPage() {
     formData.append("image", imageValue);
     formData.append("progLang", progLangValue);
 
-    fetchData({
+    return await fetchData({
       url: "http://localhost:3000/post",
       method: "POST",
       body: formData,
       stringifyBody: false,
       callback: (result) => {
         if (result.errors) setErrors(result.errors);
-        else navigate("/");
+        else callback();
       },
     });
   }
 
-  function uploadUpdatedPostData() {
+  async function uploadUpdatedPostData(callback = () => {}) {
     const formData = new FormData();
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
@@ -99,16 +99,30 @@ function PostEditorPage() {
     formData.append("progLang", progLangValue);
     if (imageValue !== "") formData.append("image", imageValue);
 
-    fetchData({
+    return await fetchData({
       url: "http://localhost:3000/post",
       method: "PUT",
       body: formData,
       stringifyBody: false,
       callback: (result) => {
         if (result.errors) setErrors(result.errors);
-        else navigate("/");
+        else callback();
       },
     });
+  }
+
+  async function handlePreview() {
+    const { post } =
+      mode === "new"
+        ? await uploadNewPostData()
+        : await uploadUpdatedPostData();
+
+    if (post)
+      window.open(
+        `http://localhost:5000/post/${post?.id}?isPreview=true`,
+        "_blank",
+        "noopener,noreferrer",
+      );
   }
 
   return (
@@ -122,7 +136,10 @@ function PostEditorPage() {
             ← Back
           </button>
           <div className="flex justify-center items-center gap-5">
-            <button className="btn  font-normal border-base-300 ">
+            <button
+              onClick={handlePreview}
+              className="btn  font-normal border-base-300 "
+            >
               Show preview
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -147,8 +164,8 @@ function PostEditorPage() {
             <button
               className="btn btn btn-primary"
               onClick={() => {
-                if (mode === "new") uploadNewPostData();
-                else uploadUpdatedPostData();
+                if (mode === "new") uploadNewPostData(() => navigate("/"));
+                else uploadUpdatedPostData(() => navigate("/"));
               }}
             >
               Save

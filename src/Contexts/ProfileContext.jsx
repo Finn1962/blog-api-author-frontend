@@ -7,7 +7,6 @@ function ProfileProvider({ children }) {
   const { fetchData } = useFetch();
 
   const [profile, setProfile] = useState(null);
-  console.log(profile);
 
   useEffect(() => {
     fetchData({
