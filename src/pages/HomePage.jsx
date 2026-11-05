@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { useLoader } from "../Contexts/LoaderContext.jsx";
 import { useFetch } from "../hooks/useFetch.js";
 import { useConfirm } from "../Contexts/ConfirmContext.jsx";
 import { debounce } from "../utils/debounce.js";
 import PageWrapper from "../Components/PageWrapper.jsx";
 import PostPreview from "../Components/PostPreview.jsx";
 import SearchBar from "../Components/SearchBar.jsx";
-import Loader from "../Components/Loader.jsx";
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -18,7 +16,6 @@ function HomePage() {
   const [paginationTotalNumber, setPaginationTotalNumber] = useState(0);
   const elementsOnEachSlide = 10;
 
-  const { setLoadingTrue, setLoadingFalse } = useLoader();
   const { fetchData } = useFetch();
   const { showConfirm, setConfirmText, setAlertText, setConfirmCallback } =
     useConfirm();
@@ -26,8 +23,6 @@ function HomePage() {
   function fetchSearch() {
     fetchData({
       url: `http://localhost:3000/post?searchValue=${searchValue}&status=${statusFilterValue}&skip=${currentPaginationNumber * elementsOnEachSlide}&take=${elementsOnEachSlide}`,
-      setLoadingTrue,
-      setLoadingFalse,
       callback: (result) => {
         setPosts(result.posts);
         setPaginationTotalNumber(
@@ -56,7 +51,6 @@ function HomePage() {
 
   return (
     <>
-      <Loader className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50" />
       <PageWrapper>
         <div className="w-full relative">
           <ControllerBar

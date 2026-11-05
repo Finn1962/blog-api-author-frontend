@@ -1,22 +1,11 @@
 import { useLocation, useNavigate, Link } from "react-router";
-import { useState, useEffect } from "react";
-import { useFetch } from "../hooks/useFetch.js";
+import { useProfile } from "../Contexts/ProfileContext.jsx";
 
 function Menu() {
-  const [profile, setProfile] = useState(null);
+  const { profile } = useProfile();
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { fetchData } = useFetch();
-
-  useEffect(() => {
-    fetchData({
-      url: "http://localhost:3000/profile",
-      callback: (result) => {
-        setProfile(result.userData);
-      },
-    });
-  }, []);
 
   function logOut() {
     fetch("http://localhost:3000/logout", {

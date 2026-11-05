@@ -1,20 +1,17 @@
-import { useLoader } from "../Contexts/LoaderContext.jsx";
 import { useState } from "react";
+import { useProfile } from "../Contexts/ProfileContext.jsx";
 import { useNavigate } from "react-router";
-
-import Loader from "../Components/Loader.jsx";
 
 function LogInPage() {
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [error, setError] = useState("");
 
-  const { isLoading, setLoadingTrue, setLoadingFalse } = useLoader();
+  const { setProfile } = useProfile();
 
   const navigate = useNavigate();
 
   async function fetchLoginData() {
-    setLoadingTrue();
     try {
       const response = await fetch("http://localhost:3000/login", {
         method: "POST",
@@ -30,11 +27,15 @@ function LogInPage() {
       });
       const result = await response.json();
       setError(result.errors ? result.errors[0] : "");
+      const profileResponse = await fetch("http://localhost:3000/profile", {
+        method: "GET",
+        credentials: "include",
+      });
+      const profileResult = await profileResponse.json();
+      setProfile(profileResult.userData);
       if (result.message === "Login successful") navigate("/");
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoadingFalse();
     }
   }
 
@@ -65,7 +66,7 @@ function LogInPage() {
         />
 
         <button className=" btn btn-primary mt-4" onClick={fetchLoginData}>
-          {isLoading ? <Loader /> : "Login"}
+          Login
         </button>
 
         {error !== "" && <p className="text-error font-bold mt-1">{error}</p>}

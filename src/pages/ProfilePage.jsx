@@ -2,8 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch.js";
 import { useFormChanges } from "../hooks/useFormChanges.js";
-import { useLoader } from "../Contexts/LoaderContext.jsx";
-import Loader from "../Components/Loader.jsx";
+import { useProfile } from "../Contexts/ProfileContext.jsx";
 import PageWrapper from "../Components/PageWrapper.jsx";
 import ToggleSwitch from "../Components/ToggleSwitch.jsx";
 
@@ -20,7 +19,7 @@ function ProfilePage() {
 
   const navigate = useNavigate();
   const { fetchData } = useFetch();
-  const { setLoadingTrue, setLoadingFalse } = useLoader();
+  const { profile, setProfile } = useProfile();
   const { addInitialValues, addInitialValue, hasChanged } = useFormChanges();
 
   const profileImageRef = useRef(null);
@@ -30,54 +29,49 @@ function ProfilePage() {
     : null;
 
   useEffect(() => {
-    fetchData({
-      url: "http://localhost:3000/profile",
-      setLoadingTrue,
-      setLoadingFalse,
-      callback: async (result) => {
-        const { userData } = result;
-        setRoleValue(
-          userData.role.charAt(0).toUpperCase() +
-            userData.role.slice(1).toLowerCase(),
-        );
-        setUsernameValue(userData.username);
-        setEmailNotificationValue(userData.email_notifications);
-        setCreatedAtValue(
-          new Date(userData.created_at).toLocaleDateString("de-DE"),
-        );
+    if (!profile) return;
+    (async () => {
+      setRoleValue(
+        profile.role.charAt(0).toUpperCase() +
+          profile.role.slice(1).toLowerCase(),
+      );
+      setUsernameValue(profile.username);
+      setEmailNotificationValue(profile.email_notifications);
+      setCreatedAtValue(
+        new Date(profile.created_at).toLocaleDateString("de-DE"),
+      );
 
-        addInitialValues({
-          usernameValue: userData.username,
-          newPasswordValue: "",
-          emailNotificationValue: userData.email_notifications,
-        });
+      addInitialValues({
+        usernameValue: profile.username,
+        newPasswordValue: "",
+        emailNotificationValue: profile.email_notifications,
+      });
 
-        if (userData.profile_image_url) {
-          try {
-            const response = await fetch(userData.profile_image_url);
-            const blob = await response.blob();
-            const file = new File(
-              [blob],
-              userData.profile_image_url || "image.jpg",
-              {
-                type: blob.type,
-              },
-            );
+      if (profile.profile_image_url) {
+        try {
+          const response = await fetch(profile.profile_image_url);
+          const blob = await response.blob();
+          const file = new File(
+            [blob],
+            profile.profile_image_url || "image.jpg",
+            {
+              type: blob.type,
+            },
+          );
 
-            setProfileImageValue(file);
-            addInitialValue("profileImageValue", file);
-            if (profileImageRef.current) {
-              const dataTransfer = new DataTransfer();
-              dataTransfer.items.add(file);
-              profileImageRef.current.files = dataTransfer.files;
-            }
-          } catch (error) {
-            console.error(error);
+          setProfileImageValue(file);
+          addInitialValue("profileImageValue", file);
+          if (profileImageRef.current) {
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            profileImageRef.current.files = dataTransfer.files;
           }
+        } catch (error) {
+          console.error(error);
         }
-      },
-    });
-  }, []);
+      }
+    })();
+  }, [profile]);
 
   function uploadProfileData() {
     const formData = new FormData();
@@ -107,15 +101,20 @@ function ProfilePage() {
             addInitialValue("profileImageValue", profileImageValue);
         }
 
-        if (result.errors) setErrors(result.errors);
-        else setErrors([]);
+        if (result.errors) return setErrors(result.errors);
+        fetchData({
+          url: "http://localhost:3000/profile",
+          callback: (result) => {
+            setProfile(result.userData);
+          },
+        });
+        setErrors([]);
       },
     });
   }
 
   return (
     <PageWrapper>
-      <Loader className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-100" />
       <div className="w-full max-w-5xl bg-base-100">
         <button
           onClick={() => navigate(-1)}

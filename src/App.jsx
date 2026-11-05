@@ -9,8 +9,8 @@ import ConfirmForm from "./Components/ConfirmForm.jsx";
 
 function App() {
   return (
-    <AppProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AppProvider>
         <div className="bg-base-200 min-h-screen">
           <Menu />
           <ConfirmForm />
@@ -22,8 +22,8 @@ function App() {
             <Route path="/login" element={<LogInPage />} />
           </Routes>
         </div>
-      </BrowserRouter>
-    </AppProvider>
+      </AppProvider>
+    </BrowserRouter>
   );
 }
 

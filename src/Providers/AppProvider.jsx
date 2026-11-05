@@ -1,11 +1,11 @@
-import { LoaderProvider } from "../Contexts/LoaderContext.jsx";
 import { ConfirmProvider } from "../Contexts/ConfirmContext.jsx";
+import { ProfileProvider } from "../Contexts/ProfileContext.jsx";
 
 function AppProvider({ children }) {
   return (
-    <LoaderProvider>
+    <ProfileProvider>
       <ConfirmProvider>{children}</ConfirmProvider>
-    </LoaderProvider>
+    </ProfileProvider>
   );
 }
 
