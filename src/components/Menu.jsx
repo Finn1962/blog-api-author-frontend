@@ -64,6 +64,9 @@ function Menu() {
                     User frontend
                   </a>
                 </li>
+                <li>
+                  <Link to={"/admin"}>Admin</Link>
+                </li>
               </ul>
             </div>
           </div>
