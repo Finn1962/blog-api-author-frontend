@@ -7,6 +7,17 @@ import PageWrapper from "../Components/PageWrapper.jsx";
 import ToggleSwitch from "../Components/ToggleSwitch.jsx";
 
 function ProfilePage() {
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get("userId");
+  const mode = userId ? "ADMIN" : "USER";
+
+  const { addInitialValues, addInitialValue, hasChanged } = useFormChanges();
+  const navigate = useNavigate();
+  const { fetchData } = useFetch();
+  const { profile, setProfile } = useProfile();
+  const [targetedProfile, setTargetedProfile] = useState(null);
+
+  const [emailValue, setEmailValue] = useState("");
   const [roleValue, setRoleValue] = useState("");
   const [createdAtValue, setCreatedAtValue] = useState(null);
   const [usernameValue, setUsernameValue] = useState("");
@@ -14,52 +25,67 @@ function ProfilePage() {
   const [newPasswordValue, setNewPasswordValue] = useState("");
   const [confirmNewPasswordValue, setConfirmNewPasswordValue] = useState("");
   const [emailNotificationValue, setEmailNotificationValue] = useState(false);
-  const [profileImageValue, setProfileImageValue] = useState();
+
   const [errors, setErrors] = useState([]);
 
-  const [searchParams] = useSearchParams();
-  const userId = searchParams.get("userId");
-
-  const navigate = useNavigate();
-  const { fetchData } = useFetch();
-  const { profile, setProfile } = useProfile();
-  const { addInitialValues, addInitialValue, hasChanged } = useFormChanges();
-
+  const [profileImageValue, setProfileImageValue] = useState();
+  const [imageSrc, setImageSrc] = useState(null);
   const profileImageRef = useRef(null);
 
-  const imageSrc = profileImageValue
-    ? URL.createObjectURL(profileImageValue)
-    : null;
+  useEffect(() => {
+    if (!profileImageValue) {
+      setImageSrc(null); // eslint-disable-line
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(profileImageValue);
+    setImageSrc(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [profileImageValue]);
 
   useEffect(() => {
-    if (!profile && !userId) return;
+    if (!profile) return;
+    (async () => {
+      if (mode === "USER") {
+        setTargetedProfile(profile);
+      } else {
+        const { userData } = await fetchData({
+          url: `http://localhost:3000/profile?userId=${userId}`,
+        });
+        setTargetedProfile(userData);
+      }
+    })();
+  }, [profile]);
 
-    //const profileData = profile
+  useEffect(() => {
+    if (!targetedProfile) return;
 
     (async () => {
+      setEmailValue(targetedProfile.email);
       setRoleValue(
-        profile.role.charAt(0).toUpperCase() +
-          profile.role.slice(1).toLowerCase(),
+        targetedProfile.role.charAt(0).toUpperCase() +
+          targetedProfile.role.slice(1).toLowerCase(),
       );
-      setUsernameValue(profile.username);
-      setEmailNotificationValue(profile.email_notifications);
+      setUsernameValue(targetedProfile.username);
+      setEmailNotificationValue(targetedProfile.email_notifications);
       setCreatedAtValue(
-        new Date(profile.created_at).toLocaleDateString("de-DE"),
+        new Date(targetedProfile.created_at).toLocaleDateString("de-DE"),
       );
 
       addInitialValues({
-        usernameValue: profile.username,
+        usernameValue: targetedProfile.username,
         newPasswordValue: "",
-        emailNotificationValue: profile.email_notifications,
+        emailNotificationValue: targetedProfile.email_notifications,
       });
 
-      if (profile.profile_image_url) {
+      if (targetedProfile.profile_image_url) {
         try {
-          const response = await fetch(profile.profile_image_url);
+          const response = await fetch(targetedProfile.profile_image_url);
           const blob = await response.blob();
           const file = new File(
             [blob],
-            profile.profile_image_url || "image.jpg",
+            targetedProfile.profile_image_url || "image.jpg",
             {
               type: blob.type,
             },
@@ -77,7 +103,7 @@ function ProfilePage() {
         }
       }
     })();
-  }, [profile]);
+  }, [targetedProfile]);
 
   function uploadProfileData() {
     const formData = new FormData();
@@ -88,8 +114,13 @@ function ProfilePage() {
     formData.append("emailNotifications", emailNotificationValue);
     formData.append("image", profileImageValue);
 
+    const url =
+      mode === "USER"
+        ? "http://localhost:3000/profile"
+        : `http://localhost:3000/profile?userId=${userId}`;
+
     fetchData({
-      url: "http://localhost:3000/profile",
+      url,
       method: "PUT",
       body: formData,
       stringifyBody: false,
@@ -108,12 +139,16 @@ function ProfilePage() {
         }
 
         if (result.errors) return setErrors(result.errors);
-        fetchData({
-          url: "http://localhost:3000/profile",
-          callback: (result) => {
-            setProfile(result.userData);
-          },
-        });
+
+        if (mode === "USER") {
+          fetchData({
+            url: "http://localhost:3000/profile",
+            callback: (result) => {
+              setProfile(result.userData);
+            },
+          });
+        }
+
         setErrors([]);
       },
     });
@@ -185,6 +220,16 @@ function ProfilePage() {
                 </p>
               </div>
               <div className="w-full">
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Email</legend>
+                  <input
+                    type="text"
+                    className="input w-full bg-base-300"
+                    placeholder="Max"
+                    disabled
+                    value={emailValue}
+                  />
+                </fieldset>
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Username</legend>
                   <input

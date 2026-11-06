@@ -22,7 +22,6 @@ function UsersPage() {
     fetchData({
       url: `http://localhost:3000/profile/all?searchValue=${searchValue}&role=${roleValue}&skip=${currentPaginationNumber * elementsOnEachSlide}&take=${elementsOnEachSlide}`,
       callback: (result) => {
-        console.log(result);
         setUsers(result.userDatas);
         setPaginationTotalNumber(
           Math.ceil(result.totalUsersNumber / elementsOnEachSlide),
