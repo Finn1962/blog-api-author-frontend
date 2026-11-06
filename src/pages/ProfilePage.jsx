@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch.js";
 import { useFormChanges } from "../hooks/useFormChanges.js";
 import { useProfile } from "../Contexts/ProfileContext.jsx";
@@ -17,6 +17,9 @@ function ProfilePage() {
   const [profileImageValue, setProfileImageValue] = useState();
   const [errors, setErrors] = useState([]);
 
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get("userId");
+
   const navigate = useNavigate();
   const { fetchData } = useFetch();
   const { profile, setProfile } = useProfile();
@@ -29,7 +32,10 @@ function ProfilePage() {
     : null;
 
   useEffect(() => {
-    if (!profile) return;
+    if (!profile && !userId) return;
+
+    //const profileData = profile
+
     (async () => {
       setRoleValue(
         profile.role.charAt(0).toUpperCase() +

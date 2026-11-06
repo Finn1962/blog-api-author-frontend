@@ -39,13 +39,12 @@ function Menu() {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  {" "}
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
                     d="M4 6h16M4 12h16M4 18h7"
-                  />{" "}
+                  />
                 </svg>
               </div>
               <ul
@@ -64,9 +63,11 @@ function Menu() {
                     User frontend
                   </a>
                 </li>
-                <li>
-                  <Link to={"/admin"}>Admin</Link>
-                </li>
+                {profile?.role === "ADMIN" && (
+                  <li>
+                    <Link to={"/users"}>Users</Link>
+                  </li>
+                )}
               </ul>
             </div>
           </div>

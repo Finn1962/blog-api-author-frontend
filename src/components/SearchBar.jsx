@@ -1,4 +1,4 @@
-function SearchBar({ className, searchValue, setSearchValue, fetchSearch }) {
+function SearchBar({ className, searchValue, setSearchValue }) {
   return (
     <div className={`${className} flex gap-1`}>
       <input
@@ -9,15 +9,6 @@ function SearchBar({ className, searchValue, setSearchValue, fetchSearch }) {
           setSearchValue(event.target.value);
         }}
       />
-
-      <div className="indicator">
-        <button
-          className="btn btn border-base-300 font-regular w-25"
-          onClick={fetchSearch}
-        >
-          Search
-        </button>
-      </div>
     </div>
   );
 }

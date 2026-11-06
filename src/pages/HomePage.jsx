@@ -6,6 +6,7 @@ import { debounce } from "../utils/debounce.js";
 import PageWrapper from "../Components/PageWrapper.jsx";
 import PostPreview from "../Components/PostPreview.jsx";
 import SearchBar from "../Components/SearchBar.jsx";
+import Pagination from "../Components/Pagination.jsx";
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -98,19 +99,11 @@ function HomePage() {
             })}
           </div>
 
-          <div className="join">
-            {new Array(paginationTotalNumber).fill(0).map((_, index) => (
-              <button
-                className={`join-item btn ${currentPaginationNumber === index && "btn-primary"}`}
-                key={index}
-                onClick={() => {
-                  setCurrentPaginationNumber(index);
-                }}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
+          <Pagination
+            paginationTotalNumber={paginationTotalNumber}
+            currentPaginationNumber={currentPaginationNumber}
+            setCurrentPaginationNumber={setCurrentPaginationNumber}
+          />
         </div>
       </PageWrapper>
     </>
@@ -123,7 +116,6 @@ function ControllerBar({
   setStatusFilterValue,
   searchValue,
   setSearchValue,
-  fetchSearch,
 }) {
   return (
     <div
@@ -162,7 +154,6 @@ function ControllerBar({
           className="join w-full max-w-300 md:flex hidden "
           searchValue={searchValue}
           setSearchValue={setSearchValue}
-          fetchSearch={fetchSearch}
         />
         <Link
           to="/post/new"
@@ -175,7 +166,6 @@ function ControllerBar({
         className="join w-full max-w-300 md:hidden flex"
         searchValue={searchValue}
         setSearchValue={setSearchValue}
-        fetchSearch={fetchSearch}
       />
     </div>
   );
