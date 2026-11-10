@@ -56,17 +56,14 @@ function ProfilePage() {
         setTargetedProfile(userData);
       }
     })();
-  }, [profile]);
+  }, [profile, mode]);
 
   useEffect(() => {
     if (!targetedProfile) return;
 
     (async () => {
       setEmailValue(targetedProfile.email);
-      setRoleValue(
-        targetedProfile.role.charAt(0).toUpperCase() +
-          targetedProfile.role.slice(1).toLowerCase(),
-      );
+      setRoleValue(targetedProfile.role);
       setUsernameValue(targetedProfile.username);
       setEmailNotificationValue(targetedProfile.email_notifications);
       setCreatedAtValue(
@@ -74,6 +71,7 @@ function ProfilePage() {
       );
 
       addInitialValues({
+        roleValue: targetedProfile.role,
         usernameValue: targetedProfile.username,
         newPasswordValue: "",
         emailNotificationValue: targetedProfile.email_notifications,
@@ -107,6 +105,7 @@ function ProfilePage() {
 
   function uploadProfileData() {
     const formData = new FormData();
+    formData.append("role", roleValue);
     formData.append("username", usernameValue);
     formData.append("currentPassword", currentPasswordValue);
     formData.append("newPassword", newPasswordValue);
@@ -125,11 +124,13 @@ function ProfilePage() {
       body: formData,
       stringifyBody: false,
       callback: (result) => {
+        console.log(result);
         if (result.message === "User data successfully changed") {
           setCurrentPasswordValue("");
           setNewPasswordValue("");
           setConfirmNewPasswordValue("");
           addInitialValues({
+            roleValue: roleValue,
             usernameValue: usernameValue,
             newPasswordValue: "",
             emailNotificationValue: emailNotificationValue,
@@ -165,7 +166,7 @@ function ProfilePage() {
         </button>
         <div className="p-3 pt-0">
           <div className="grid md:grid-cols-2 grid-cols-1 gap-5">
-            <div className="z-10 w-full h-full flex justify-center items-center aspect-square overflow-hidden relative">
+            <div className="z-10 w-full h-full flex flex-col gap-3 justify-center items-center aspect-square overflow-hidden relative">
               {imageSrc && (
                 <button
                   className="btn btn-circle boder-base-100 p-2 w-10 absolute right-5 top-5 z-20"
@@ -211,11 +212,36 @@ function ProfilePage() {
                   </svg>
                 </div>
               )}
+              {errors.some((error) => error.msg === "Image is too large") && (
+                <p className="text-error font-semibold self-start">
+                  Image is too large
+                </p>
+              )}
+              {errors.some(
+                (error) => error.msg === "Only image files are allowed",
+              ) && (
+                <p className="text-error font-semibold self-start">
+                  Only image files are allowed
+                </p>
+              )}
             </div>
             <div className="flex flex-col justify-between items-start gap-4">
-              <div className="flex justify-between items-center w-full">
-                <p className="text-primary font-semibold">{roleValue}</p>
-                <p className="text-xs opacity-35">
+              <div className="flex justify-between items-center w-full ">
+                {mode === "ADMIN" ? (
+                  <select
+                    defaultValue="Pick a text editor "
+                    className="select bg-base-200 text-primary"
+                    value={roleValue}
+                    onChange={(event) => setRoleValue(event.target.value)}
+                  >
+                    <option value="USER">USER</option>
+                    <option value="AUTHOR">AUTHOR</option>
+                    <option value="ADMIN">ADMIN</option>
+                  </select>
+                ) : (
+                  <p className="text-primary font-semibold">{roleValue}</p>
+                )}
+                <p className="text-xs opacity-35 text-end">
                   Member since: {createdAtValue}
                 </p>
               </div>
@@ -244,6 +270,13 @@ function ProfilePage() {
                   ) && (
                     <p className="text-error font-semibold">
                       Username is required
+                    </p>
+                  )}
+                  {errors.some(
+                    (error) => error.msg === "Username is already taken",
+                  ) && (
+                    <p className="text-error font-semibold">
+                      Username is already taken
                     </p>
                   )}
                 </fieldset>
@@ -344,6 +377,7 @@ function ProfilePage() {
                     className="btn btn-block btn-primary"
                     disabled={
                       hasChanged({
+                        roleValue,
                         usernameValue,
                         newPasswordValue,
                         emailNotificationValue,
