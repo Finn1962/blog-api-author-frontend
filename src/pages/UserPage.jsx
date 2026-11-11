@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useConfirm } from "../Contexts/ConfirmContext.jsx";
 import { useFetch } from "../hooks/useFetch.js";
 import { debounce } from "../utils/debounce.js";
 import PageWrapper from "../Components/PageWrapper";
@@ -83,7 +84,12 @@ function UsersPage() {
             </thead>
             <tbody>
               {users?.map((user, index) => (
-                <User user={user} index={index} key={user.id} />
+                <User
+                  user={user}
+                  index={index}
+                  key={user.id}
+                  getUserData={getUserData}
+                />
               ))}
             </tbody>
           </table>
@@ -99,8 +105,17 @@ function UsersPage() {
   );
 }
 
-function User({ user, index }) {
+function User({ user, getUserData, index }) {
+  const { fetchData } = useFetch();
+
   const navigate = useNavigate();
+  const {
+    showConfirm,
+    hideConfirm,
+    setAlertText,
+    setConfirmText,
+    setConfirmCallback,
+  } = useConfirm();
 
   return (
     <tr className={index % 2 === 0 ? "bg-base-200" : "bg-base-100"}>
@@ -145,6 +160,21 @@ function User({ user, index }) {
             }
           />
           <DeleteButton
+            onClick={() => {
+              showConfirm();
+              setAlertText("Deleted accounts cannot be restored!");
+              setConfirmText("Do you really want to delete the account?");
+              setConfirmCallback(() => () => {
+                fetchData({
+                  url: `http://localhost:3000/profile/${user.id}`,
+                  method: "DELETE",
+                  callback: () => {
+                    hideConfirm();
+                    getUserData();
+                  },
+                });
+              });
+            }}
             className={
               index % 2 === 0 ? "hover:bg-base-200" : "hover:bg-base-100"
             }
