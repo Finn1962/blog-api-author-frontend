@@ -1,3 +1,4 @@
+const apiUrl = import.meta.env.VITE_API_URL;
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { useFetch } from "../hooks/useFetch.js";
@@ -23,7 +24,7 @@ function HomePage() {
 
   function fetchSearch() {
     fetchData({
-      url: `http://localhost:3000/post?searchValue=${searchValue}&status=${statusFilterValue}&skip=${currentPaginationNumber * elementsOnEachSlide}&take=${elementsOnEachSlide}`,
+      url: `${apiUrl}post?searchValue=${searchValue}&status=${statusFilterValue}&skip=${currentPaginationNumber * elementsOnEachSlide}&take=${elementsOnEachSlide}`,
       callback: (result) => {
         setPosts(result.posts);
         setPaginationTotalNumber(
@@ -83,7 +84,7 @@ function HomePage() {
                     setAlertText("Warning: Deleted posts cannot be restored!");
                     setConfirmCallback(() => () => {
                       fetchData({
-                        url: `http://localhost:3000/post/${post.id}`,
+                        url: `${apiUrl}post/${post.id}`,
                         method: "DELETE",
                       });
                       setPosts((prev) => {

@@ -1,3 +1,4 @@
+const apiUrl = import.meta.env.VITE_API_URL;
 import { useState } from "react";
 import { useProfile } from "../Contexts/ProfileContext.jsx";
 import { useNavigate } from "react-router";
@@ -13,7 +14,7 @@ function LogInPage() {
 
   async function fetchLoginData() {
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch(`${apiUrl}login`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -27,7 +28,7 @@ function LogInPage() {
       });
       const result = await response.json();
       setError(result.errors ? result.errors[0] : "");
-      const profileResponse = await fetch("http://localhost:3000/profile", {
+      const profileResponse = await fetch(`${apiUrl}profile`, {
         method: "GET",
         credentials: "include",
       });

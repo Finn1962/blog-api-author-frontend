@@ -1,3 +1,5 @@
+const apiUrl = import.meta.env.VITE_API_URL;
+const userFrontendUrl = import.meta.env.VITE_USER_FRONTEND_URL;
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
 import { useFetch } from "../hooks/useFetch.js";
@@ -35,7 +37,7 @@ function PostEditorPage() {
   useEffect(() => {
     if (mode !== "edit") return;
     fetchData({
-      url: `http://localhost:3000/post/${postId}`,
+      url: `${apiUrl}post/${postId}`,
       callback: async (result) => {
         setStatusValue(result.post.status);
         setTitleValue(result.post.title);
@@ -78,7 +80,7 @@ function PostEditorPage() {
     formData.append("progLang", progLangValue);
 
     return await fetchData({
-      url: "http://localhost:3000/post",
+      url: `${apiUrl}post`,
       method: "POST",
       body: formData,
       stringifyBody: false,
@@ -100,7 +102,7 @@ function PostEditorPage() {
     if (imageValue !== "") formData.append("image", imageValue);
 
     return await fetchData({
-      url: "http://localhost:3000/post",
+      url: `${apiUrl}post`,
       method: "PUT",
       body: formData,
       stringifyBody: false,
@@ -119,7 +121,7 @@ function PostEditorPage() {
 
     if (post)
       window.open(
-        `http://localhost:5000/post/${post?.id}?isPreview=true`,
+        `${userFrontendUrl}post/${post?.id}?isPreview=true`,
         "_blank",
         "noopener,noreferrer",
       );

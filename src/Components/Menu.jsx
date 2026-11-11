@@ -1,3 +1,5 @@
+const apiUrl = import.meta.env.VITE_API_URL;
+const userFrontendUrl = import.meta.env.VITE_USER_FRONTEND_URL;
 import { useLocation, useNavigate, Link } from "react-router";
 import { useProfile } from "../Contexts/ProfileContext.jsx";
 
@@ -8,7 +10,7 @@ function Menu() {
   const location = useLocation();
 
   function logOut() {
-    fetch("http://localhost:3000/logout", {
+    fetch(`${apiUrl}logout`, {
       method: "GET",
       credentials: "include",
     })
@@ -55,11 +57,7 @@ function Menu() {
                   <Link to={"/"}>Home</Link>
                 </li>
                 <li>
-                  <a
-                    href="http://localhost:5000/"
-                    target="_blank"
-                    rel="noopener"
-                  >
+                  <a href={userFrontendUrl} target="_blank" rel="noopener">
                     User frontend
                   </a>
                 </li>

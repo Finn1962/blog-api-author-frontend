@@ -1,3 +1,4 @@
+const apiUrl = import.meta.env.VITE_API_URL;
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch.js";
@@ -51,7 +52,7 @@ function ProfilePage() {
         setTargetedProfile(profile);
       } else {
         const { userData } = await fetchData({
-          url: `http://localhost:3000/profile?userId=${userId}`,
+          url: `${apiUrl}profile?userId=${userId}`,
         });
         setTargetedProfile(userData);
       }
@@ -115,8 +116,8 @@ function ProfilePage() {
 
     const url =
       mode === "USER"
-        ? "http://localhost:3000/profile"
-        : `http://localhost:3000/profile?userId=${userId}`;
+        ? `${apiUrl}profile`
+        : `${apiUrl}profile?userId=${userId}`;
 
     fetchData({
       url,
@@ -143,7 +144,7 @@ function ProfilePage() {
 
         if (mode === "USER") {
           fetchData({
-            url: "http://localhost:3000/profile",
+            url: `${apiUrl}profile`,
             callback: (result) => {
               setProfile(result.userData);
             },

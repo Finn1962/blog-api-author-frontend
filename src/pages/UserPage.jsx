@@ -1,3 +1,4 @@
+const apiUrl = import.meta.env.VITE_API_URL;
 import { useState, useEffect } from "react";
 import { useConfirm } from "../Contexts/ConfirmContext.jsx";
 import { useFetch } from "../hooks/useFetch.js";
@@ -21,7 +22,7 @@ function UsersPage() {
 
   function getUserData() {
     fetchData({
-      url: `http://localhost:3000/profile/all?searchValue=${searchValue}&role=${roleValue}&skip=${currentPaginationNumber * elementsOnEachSlide}&take=${elementsOnEachSlide}`,
+      url: `${apiUrl}profile/all?searchValue=${searchValue}&role=${roleValue}&skip=${currentPaginationNumber * elementsOnEachSlide}&take=${elementsOnEachSlide}`,
       callback: (result) => {
         setUsers(result.userDatas);
         setPaginationTotalNumber(
@@ -166,7 +167,7 @@ function User({ user, getUserData, index }) {
               setConfirmText("Do you really want to delete the account?");
               setConfirmCallback(() => () => {
                 fetchData({
-                  url: `http://localhost:3000/profile/${user.id}`,
+                  url: `${apiUrl}profile/${user.id}`,
                   method: "DELETE",
                   callback: () => {
                     hideConfirm();
