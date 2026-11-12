@@ -128,7 +128,6 @@ function ProfilePage() {
       body: formData,
       stringifyBody: false,
       callback: (result) => {
-        console.log(result);
         if (result.message === "User data successfully changed") {
           setCurrentPasswordValue("");
           setNewPasswordValue("");

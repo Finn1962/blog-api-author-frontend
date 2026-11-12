@@ -29,14 +29,12 @@ function LogInPage() {
         }),
       });
       const result = await response.json();
-      console.log("Ergebniss: ", result);
       setError(result.errors ? result.errors[0] : "");
       const profileResponse = await fetch(`${apiUrl}profile`, {
         method: "GET",
         credentials: "include",
       });
       const profileResult = await profileResponse.json();
-      console.log("Profil: ", profileResult);
       setProfile(profileResult.userData);
       if (result.message === "Login successful") navigate("/");
     } catch (error) {
