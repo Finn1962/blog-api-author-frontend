@@ -11,6 +11,7 @@ import Pagination from "../Components/Pagination.jsx";
 import { useNavigate } from "react-router-dom";
 
 function UsersPage() {
+  const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState();
   const [searchValue, setSearchValue] = useState("");
   const [roleValue, setRoleValue] = useState("ALL");
@@ -23,6 +24,7 @@ function UsersPage() {
   function getUserData() {
     fetchData({
       url: `${apiUrl}profile/all?searchValue=${searchValue}&role=${roleValue}&skip=${currentPaginationNumber * elementsOnEachSlide}&take=${elementsOnEachSlide}`,
+      setIsLoading: setIsLoading,
       callback: (result) => {
         setUsers(result.userDatas);
         setPaginationTotalNumber(
@@ -38,75 +40,81 @@ function UsersPage() {
   }, [searchValue]);
 
   return (
-    <PageWrapper>
-      <div className="w-full max-w-5xl flex flex-col gap-5 ">
-        <div
-          className={`flex flex-col  gap-3 w-full bg-base-100 p-3 shadow-sm`}
-        >
-          <div className=" flex justify-between items-center gap-3">
-            <select
-              defaultValue="Pick a color"
-              className="select bg-base-200 max-w-30"
-              value={roleValue}
-              onChange={(event) => setRoleValue(event.target.value)}
-            >
-              <option value="ALL">All</option>
-              <option value="USER">User</option>
-              <option value="AUTHOR">Author</option>
-              <option value="ADMIN">Admin</option>
-            </select>
+    <>
+      {isLoading && (
+        <span className="loading loading-spinner loading-xl fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-100"></span>
+      )}
+      <PageWrapper>
+        <div className="w-full max-w-5xl flex flex-col gap-5 ">
+          <div
+            className={`flex flex-col  gap-3 w-full bg-base-100 p-3 shadow-sm`}
+          >
+            <div className=" flex justify-between items-center gap-3">
+              <select
+                defaultValue="Pick a color"
+                className="select bg-base-200 max-w-30"
+                value={roleValue}
+                onChange={(event) => setRoleValue(event.target.value)}
+              >
+                <option value="ALL">All</option>
+                <option value="USER">User</option>
+                <option value="AUTHOR">Author</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+              <SearchBar
+                className="join w-full max-w-300 md:flex hidden "
+                searchValue={searchValue}
+                setSearchValue={setSearchValue}
+              />
+            </div>
             <SearchBar
-              className="join w-full max-w-300 md:flex hidden "
+              className="join w-full max-w-300 md:hidden flex"
               searchValue={searchValue}
               setSearchValue={setSearchValue}
             />
           </div>
-          <SearchBar
-            className="join w-full max-w-300 md:hidden flex"
-            searchValue={searchValue}
-            setSearchValue={setSearchValue}
+
+          <div className="overflow-x-auto">
+            <table className="table table-md bg-base-100  table-fixed w-full py-3">
+              <thead>
+                <tr className="h-14">
+                  <th className="w-20 "></th>
+                  <th className="w-1/4 text-accent opacity-80">Name</th>
+                  <th className="text-accent hidden sm:table-cell opacity-80">
+                    Role
+                  </th>
+                  <th className=" text-accent sm:text-end text-start opacity-80">
+                    Created at
+                  </th>
+                  <th className="w-30"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {users?.map((user, index) => (
+                  <User
+                    user={user}
+                    index={index}
+                    key={user.id}
+                    getUserData={getUserData}
+                    setIsLoading={setIsLoading}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <Pagination
+            paginationTotalNumber={paginationTotalNumber}
+            currentPaginationNumber={currentPaginationNumber}
+            setCurrentPaginationNumber={setCurrentPaginationNumber}
           />
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="table table-md bg-base-100  table-fixed w-full py-3">
-            <thead>
-              <tr className="h-14">
-                <th className="w-20 "></th>
-                <th className="w-1/4 text-accent opacity-80">Name</th>
-                <th className="text-accent hidden sm:table-cell opacity-80">
-                  Role
-                </th>
-                <th className=" text-accent sm:text-end text-start opacity-80">
-                  Created at
-                </th>
-                <th className="w-30"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {users?.map((user, index) => (
-                <User
-                  user={user}
-                  index={index}
-                  key={user.id}
-                  getUserData={getUserData}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <Pagination
-          paginationTotalNumber={paginationTotalNumber}
-          currentPaginationNumber={currentPaginationNumber}
-          setCurrentPaginationNumber={setCurrentPaginationNumber}
-        />
-      </div>
-    </PageWrapper>
+      </PageWrapper>
+    </>
   );
 }
 
-function User({ user, getUserData, index }) {
+function User({ user, getUserData, index, setIsLoading }) {
   const { fetchData } = useFetch();
 
   const navigate = useNavigate();
@@ -168,6 +176,7 @@ function User({ user, getUserData, index }) {
               setConfirmCallback(() => () => {
                 fetchData({
                   url: `${apiUrl}profile/${user.id}`,
+                  setIsLoading: setIsLoading,
                   method: "DELETE",
                   callback: () => {
                     hideConfirm();

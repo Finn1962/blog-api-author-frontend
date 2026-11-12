@@ -10,6 +10,7 @@ import SearchBar from "../Components/SearchBar.jsx";
 import Pagination from "../Components/Pagination.jsx";
 
 function HomePage() {
+  const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [statusFilterValue, setStatusFilterValue] = useState("ALL");
@@ -25,6 +26,7 @@ function HomePage() {
   function fetchSearch() {
     fetchData({
       url: `${apiUrl}post?searchValue=${searchValue}&status=${statusFilterValue}&skip=${currentPaginationNumber * elementsOnEachSlide}&take=${elementsOnEachSlide}`,
+      setIsLoading: setIsLoading,
       callback: (result) => {
         setPosts(result.posts);
         setPaginationTotalNumber(
@@ -53,6 +55,9 @@ function HomePage() {
 
   return (
     <>
+      {isLoading && (
+        <span className="loading loading-spinner loading-xl fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"></span>
+      )}
       <PageWrapper>
         <div className="w-full relative">
           <ControllerBar
@@ -86,6 +91,7 @@ function HomePage() {
                       fetchData({
                         url: `${apiUrl}post/${post.id}`,
                         method: "DELETE",
+                        setIsLoading: setIsLoading,
                       });
                       setPosts((prev) => {
                         const abc = prev.filter(

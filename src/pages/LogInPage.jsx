@@ -7,12 +7,14 @@ function LogInPage() {
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { setProfile } = useProfile();
 
   const navigate = useNavigate();
 
   async function fetchLoginData() {
+    setIsLoading(true);
     try {
       const response = await fetch(`${apiUrl}login`, {
         method: "POST",
@@ -39,42 +41,49 @@ function LogInPage() {
       if (result.message === "Login successful") navigate("/");
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
-    <div className="flex justify-center items-center bg-base-200 w-screen h-screen d">
-      <fieldset
-        className="fieldset bg-base-100 border-base-300 rounded-box w-xs border p-4 shadow-lg"
-        onKeyDown={(event) => event.key === "Enter" && fetchLoginData()}
-      >
-        <legend className="fieldset-legend">Login</legend>
+    <>
+      {isLoading && (
+        <span className="loading loading-spinner loading-xl fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"></span>
+      )}
+      <div className="flex justify-center items-center bg-base-200 w-screen h-screen d">
+        <fieldset
+          className="fieldset bg-base-100 border-base-300 rounded-box w-xs border p-4 shadow-lg"
+          onKeyDown={(event) => event.key === "Enter" && fetchLoginData()}
+        >
+          <legend className="fieldset-legend">Login</legend>
 
-        <label className="label">Email</label>
-        <input
-          type="email"
-          className="input bg-base-300"
-          placeholder="Email"
-          onChange={(event) => setEmailValue(event.target.value)}
-          value={emailValue}
-        />
+          <label className="label">Email</label>
+          <input
+            type="email"
+            className="input bg-base-300"
+            placeholder="Email"
+            onChange={(event) => setEmailValue(event.target.value)}
+            value={emailValue}
+          />
 
-        <label className="label">Password</label>
-        <input
-          type="password"
-          className="input bg-base-300"
-          placeholder="Password"
-          onChange={(event) => setPasswordValue(event.target.value)}
-          value={passwordValue}
-        />
+          <label className="label">Password</label>
+          <input
+            type="password"
+            className="input bg-base-300"
+            placeholder="Password"
+            onChange={(event) => setPasswordValue(event.target.value)}
+            value={passwordValue}
+          />
 
-        <button className=" btn btn-primary mt-4" onClick={fetchLoginData}>
-          Login
-        </button>
+          <button className=" btn btn-primary mt-4" onClick={fetchLoginData}>
+            Login
+          </button>
 
-        {error !== "" && <p className="text-error font-bold mt-1">{error}</p>}
-      </fieldset>
-    </div>
+          {error !== "" && <p className="text-error font-bold mt-1">{error}</p>}
+        </fieldset>
+      </div>
+    </>
   );
 }
 

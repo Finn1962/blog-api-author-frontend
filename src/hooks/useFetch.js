@@ -8,8 +8,7 @@ function useFetch() {
     url,
     method = "GET",
     body = null,
-    setLoadingTrue = () => {},
-    setLoadingFalse = () => {},
+    setIsLoading = () => {},
     callback = () => {},
     stringifyBody = true,
   }) {
@@ -17,7 +16,7 @@ function useFetch() {
       const hasBody =
         method === "POST" || method === "PUT" || method === "PATCH";
 
-      setLoadingTrue();
+      setIsLoading(true);
 
       let response = await fetch(url, {
         method,
@@ -43,7 +42,7 @@ function useFetch() {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoadingFalse();
+      setIsLoading(false);
     }
   }
 
