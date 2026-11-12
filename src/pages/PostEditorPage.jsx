@@ -74,7 +74,6 @@ function PostEditorPage() {
   }, []);
 
   async function uploadNewPostData(callback = () => {}) {
-    if (isLoading) return;
     const formData = new FormData();
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
@@ -97,7 +96,6 @@ function PostEditorPage() {
   }
 
   async function uploadUpdatedPostData(callback = () => {}) {
-    if (isLoading) return;
     const formData = new FormData();
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
@@ -175,6 +173,7 @@ function PostEditorPage() {
                 <option value="PUBLIC">Public</option>
               </select>
               <button
+                disabled={isLoading}
                 className="btn btn btn-primary"
                 onClick={() => {
                   if (mode === "new") {
