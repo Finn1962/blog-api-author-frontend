@@ -16,7 +16,7 @@ function PostEditorPage() {
   const { fetchData } = useFetch();
   const { postId } = useParams();
 
-  const [mode, setMode] = useState(() => {
+  const [mode] = useState(() => {
     switch (true) {
       case location.pathname.includes("new"):
         return "new";
@@ -24,6 +24,7 @@ function PostEditorPage() {
         return "edit";
     }
   });
+  console.log(mode);
 
   const [statusValue, setStatusValue] = useState("DRAFT");
   const [titleValue, setTitleValue] = useState("");
@@ -124,15 +125,15 @@ function PostEditorPage() {
         ? await uploadNewPostData()
         : await uploadUpdatedPostData();
 
-    setMode("edit");
-
-    if (post) {
+    if (post)
       window.open(
         `${userFrontendUrl}post/${post?.id}?isPreview=true`,
         "_blank",
         "noopener,noreferrer",
       );
-    }
+
+    if (post) navigate(`/post/edit/${post.id}`);
+    window.location.reload();
   }
 
   return (
