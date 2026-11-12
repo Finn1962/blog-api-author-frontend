@@ -175,8 +175,12 @@ function PostEditorPage() {
               <button
                 className="btn btn btn-primary"
                 onClick={() => {
-                  if (mode === "new") uploadNewPostData(() => navigate("/"));
-                  else uploadUpdatedPostData(() => navigate("/"));
+                  if (isLoading) return;
+                  if (mode === "new") {
+                    uploadNewPostData(() => navigate("/"));
+                  } else {
+                    uploadUpdatedPostData(() => navigate("/"));
+                  }
                 }}
               >
                 Save
