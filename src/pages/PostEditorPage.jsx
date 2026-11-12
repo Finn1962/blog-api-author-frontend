@@ -74,6 +74,7 @@ function PostEditorPage() {
   }, []);
 
   async function uploadNewPostData(callback = () => {}) {
+    if (isLoading) return;
     const formData = new FormData();
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
@@ -96,6 +97,7 @@ function PostEditorPage() {
   }
 
   async function uploadUpdatedPostData(callback = () => {}) {
+    if (isLoading) return;
     const formData = new FormData();
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
@@ -175,7 +177,6 @@ function PostEditorPage() {
               <button
                 className="btn btn btn-primary"
                 onClick={() => {
-                  if (isLoading) return;
                   if (mode === "new") {
                     uploadNewPostData(() => navigate("/"));
                   } else {
