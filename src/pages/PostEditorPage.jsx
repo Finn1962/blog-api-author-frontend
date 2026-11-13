@@ -133,14 +133,15 @@ function PostEditorPage() {
         ? await uploadNewPostData()
         : await uploadUpdatedPostData();
 
-    if (post)
-      window.open(
-        `${userFrontendUrl}post/${post?.id}?isPreview=true`,
-        "_blank",
-        "noopener,noreferrer",
-      );
+    if (!post) return;
 
-    if (post) navigate(`/post/edit/${post.id}`);
+    window.open(
+      `${userFrontendUrl}post/${post?.id}?isPreview=true`,
+      "_blank",
+      "noopener,noreferrer",
+    );
+
+    navigate(`/post/edit/${post.id}`);
     window.location.reload();
   }
 
