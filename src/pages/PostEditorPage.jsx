@@ -37,7 +37,6 @@ function PostEditorPage() {
   const [errors, setErrors] = useState([]);
   const [imageValue, setImageValue] = useState(null);
   const imageSrc = imageValue ? URL.createObjectURL(imageValue) : null;
-  console.log(sendNotification);
 
   const fileInputRef = useRef(null);
 
@@ -92,6 +91,8 @@ function PostEditorPage() {
   }
 
   async function uploadNewPostData(callback = () => {}) {
+    if (isLoading) return;
+
     const formData = createFormData();
 
     return await fetchData({
@@ -108,6 +109,8 @@ function PostEditorPage() {
   }
 
   async function uploadUpdatedPostData(callback = () => {}) {
+    if (isLoading) return;
+
     const formData = createFormData();
     formData.append("id", postId);
 
