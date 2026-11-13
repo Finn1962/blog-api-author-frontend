@@ -173,6 +173,7 @@ function PostEditorPage() {
                   setConfirmText("Would you like to continue?");
                   setConfirmCallback(() => () => handlePreview());
                 }}
+                disabled={isLoading}
                 className="btn  font-normal border-base-300 "
               >
                 Show preview
