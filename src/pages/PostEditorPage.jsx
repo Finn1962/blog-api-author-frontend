@@ -209,7 +209,7 @@ function PostEditorPage() {
                 disabled={isLoading}
                 className="btn btn btn-primary"
                 onClick={() => {
-                  if (statusValue === "PUBLIC" && sendNotification) {
+                  if (statusValue === "PUBLIC" && sendNotification === "true") {
                     showConfirm();
                     setAlertText(
                       "Users will receive notifications when you publish the post!",
