@@ -3,6 +3,7 @@ const userFrontendUrl = import.meta.env.VITE_USER_FRONTEND_URL;
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
 import { useFetch } from "../hooks/useFetch.js";
+import { useConfirm } from "../Contexts/ConfirmContext.jsx";
 
 import PageWrapper from "../Components/PageWrapper.jsx";
 import RichTextEditor from "../Components/RichTextEditor.jsx";
@@ -14,6 +15,8 @@ function PostEditorPage() {
 
   const navigate = useNavigate();
   const { fetchData } = useFetch();
+  const { showConfirm, setAlertText, setConfirmText, setConfirmCallback } =
+    useConfirm();
   const { postId } = useParams();
 
   const [mode] = useState(() => {
@@ -24,9 +27,9 @@ function PostEditorPage() {
         return "edit";
     }
   });
-  console.log(mode);
 
   const [statusValue, setStatusValue] = useState("DRAFT");
+  const [sendNotification, setSendNotification] = useState("false");
   const [titleValue, setTitleValue] = useState("");
   const [textEditorValue, setTextEditorValue] = useState("");
   const [tagsValue, setTagsValue] = useState("");
@@ -34,6 +37,7 @@ function PostEditorPage() {
   const [errors, setErrors] = useState([]);
   const [imageValue, setImageValue] = useState(null);
   const imageSrc = imageValue ? URL.createObjectURL(imageValue) : null;
+  console.log(sendNotification);
 
   const fileInputRef = useRef(null);
 
@@ -45,6 +49,7 @@ function PostEditorPage() {
       callback: async (result) => {
         setStatusValue(result.post.status);
         setTitleValue(result.post.title);
+        setSendNotification(`${result.post.send_notification}`);
         setTextEditorValue(result.post.content);
         setProgLangValue(result.post.prog_lang);
         setTagsValue(result.post.tags.map((tag) => tag.content).join(", "));
@@ -74,14 +79,20 @@ function PostEditorPage() {
     });
   }, []);
 
-  async function uploadNewPostData(callback = () => {}) {
+  function createFormData() {
     const formData = new FormData();
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
     formData.append("status", statusValue);
+    formData.append("sendNotification", sendNotification);
     formData.append("tags", tagsValue);
-    formData.append("image", imageValue);
     formData.append("progLang", progLangValue);
+    if (imageValue !== "") formData.append("image", imageValue);
+    return formData;
+  }
+
+  async function uploadNewPostData(callback = () => {}) {
+    const formData = createFormData();
 
     return await fetchData({
       url: `${apiUrl}post`,
@@ -97,14 +108,8 @@ function PostEditorPage() {
   }
 
   async function uploadUpdatedPostData(callback = () => {}) {
-    const formData = new FormData();
-    formData.append("title", titleValue);
-    formData.append("content", textEditorValue);
-    formData.append("status", statusValue);
-    formData.append("tags", tagsValue);
+    const formData = createFormData();
     formData.append("id", postId);
-    formData.append("progLang", progLangValue);
-    if (imageValue !== "") formData.append("image", imageValue);
 
     return await fetchData({
       url: `${apiUrl}post`,
@@ -136,6 +141,11 @@ function PostEditorPage() {
     window.location.reload();
   }
 
+  function handleSafe() {
+    if (mode === "new") uploadNewPostData(() => navigate("/"));
+    else uploadUpdatedPostData(() => navigate("/"));
+  }
+
   return (
     <>
       {isLoading && (
@@ -150,9 +160,19 @@ function PostEditorPage() {
             >
               ← Back
             </button>
-            <div className="flex justify-center items-center gap-5">
+            <div className="flex justify-center items-center gap-3">
               <button
-                onClick={handlePreview}
+                onClick={() => {
+                  showConfirm();
+                  console.log(sendNotification);
+                  setAlertText(
+                    statusValue === "PUBLIC" && sendNotification === "true"
+                      ? "If you view the preview, the post will be saved and users will receive a notification!"
+                      : "If you view the preview, the post will be saved!",
+                  );
+                  setConfirmText("Would you like to continue?");
+                  setConfirmCallback(() => () => handlePreview());
+                }}
                 className="btn  font-normal border-base-300 "
               >
                 Show preview
@@ -169,7 +189,15 @@ function PostEditorPage() {
                 </svg>
               </button>
               <select
-                className="select font-normal border-base-300 bg-base-300"
+                className="select font-normal border-base-300 bg-base-300 w-min"
+                value={sendNotification}
+                onChange={(event) => setSendNotification(event.target.value)}
+              >
+                <option value={false}>No notifications</option>
+                <option value={true}>Send nofification</option>
+              </select>
+              <select
+                className="select font-normal border-base-300 bg-base-300 w-min"
                 value={statusValue}
                 onChange={(event) => setStatusValue(event.target.value)}
               >
@@ -180,10 +208,15 @@ function PostEditorPage() {
                 disabled={isLoading}
                 className="btn btn btn-primary"
                 onClick={() => {
-                  if (mode === "new") {
-                    uploadNewPostData(() => navigate("/"));
+                  if (statusValue === "PUBLIC" && sendNotification) {
+                    showConfirm();
+                    setAlertText(
+                      "Users will receive notifications when you publish the post!",
+                    );
+                    setConfirmText("Would you like to continue?");
+                    setConfirmCallback(() => () => handleSafe());
                   } else {
-                    uploadUpdatedPostData(() => navigate("/"));
+                    handleSafe();
                   }
                 }}
               >
@@ -248,6 +281,7 @@ function PostEditorPage() {
                 <option value="C_SHARP">C#</option>
               </select>
             </fieldset>
+
             <fieldset className="fieldset">
               <legend className="fieldset-legend pt-0 pb-2">Image</legend>
               <input
@@ -292,6 +326,7 @@ function PostEditorPage() {
               )}
               <label className="label">Max size 2MB</label>
             </fieldset>
+
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Tags</legend>
               <textarea
