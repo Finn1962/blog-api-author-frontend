@@ -4,7 +4,7 @@ import { useProfile } from "../Contexts/ProfileContext.jsx";
 import { useNavigate } from "react-router";
 
 function LogInPage() {
-  const [emailValue, setEmailValue] = useState("");
+  const [usernameOrEmailValue, setUsernameOrEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +23,7 @@ function LogInPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: emailValue,
+          usernameOrEmail: usernameOrEmailValue,
           password: passwordValue,
           portal: "AUTHOR",
         }),
@@ -61,8 +61,8 @@ function LogInPage() {
             type="email"
             className="input bg-base-300"
             placeholder="Email"
-            onChange={(event) => setEmailValue(event.target.value)}
-            value={emailValue}
+            onChange={(event) => setUsernameOrEmailValue(event.target.value)}
+            value={usernameOrEmailValue}
           />
 
           <label className="label">Password</label>
