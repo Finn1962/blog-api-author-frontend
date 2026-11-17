@@ -5,7 +5,6 @@ import { useFetch } from "../hooks/useFetch.js";
 import { useFormChanges } from "../hooks/useFormChanges.js";
 import { useProfile } from "../Contexts/ProfileContext.jsx";
 import PageWrapper from "../Components/PageWrapper.jsx";
-import ToggleSwitch from "../Components/ToggleSwitch.jsx";
 
 function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +26,6 @@ function ProfilePage() {
   const [currentPasswordValue, setCurrentPasswordValue] = useState("");
   const [newPasswordValue, setNewPasswordValue] = useState("");
   const [confirmNewPasswordValue, setConfirmNewPasswordValue] = useState("");
-  const [emailNotificationValue, setEmailNotificationValue] = useState(false);
 
   const [errors, setErrors] = useState([]);
 
@@ -69,7 +67,6 @@ function ProfilePage() {
       setEmailValue(targetedProfile.email);
       setRoleValue(targetedProfile.role);
       setUsernameValue(targetedProfile.username);
-      setEmailNotificationValue(targetedProfile.email_notifications);
       setCreatedAtValue(
         new Date(targetedProfile.created_at).toLocaleDateString("de-DE"),
       );
@@ -114,7 +111,6 @@ function ProfilePage() {
     formData.append("currentPassword", currentPasswordValue);
     formData.append("newPassword", newPasswordValue);
     formData.append("confirmNewPassword", confirmNewPasswordValue);
-    formData.append("emailNotifications", emailNotificationValue);
     formData.append("image", profileImageValue);
 
     const url =
@@ -126,6 +122,7 @@ function ProfilePage() {
       url,
       method: "PUT",
       body: formData,
+      setIsLoading: setIsLoading,
       stringifyBody: false,
       callback: (result) => {
         if (result.message === "User data successfully changed") {
@@ -136,7 +133,6 @@ function ProfilePage() {
             roleValue: roleValue,
             usernameValue: usernameValue,
             newPasswordValue: "",
-            emailNotificationValue: emailNotificationValue,
           });
           if (profileImageValue)
             addInitialValue("profileImageValue", profileImageValue);
@@ -371,17 +367,6 @@ function ProfilePage() {
                 </div>
                 <div className="w-full">
                   <fieldset className="fieldset">
-                    <legend className="fieldset-legend">
-                      Receive email notifications when new posts are published.
-                    </legend>
-                    <ToggleSwitch
-                      emailNotificationValue={emailNotificationValue}
-                      setEmailNotificationValue={setEmailNotificationValue}
-                    />
-                  </fieldset>
-                </div>
-                <div className="w-full">
-                  <fieldset className="fieldset">
                     <button
                       className="btn btn-block btn-primary"
                       disabled={
@@ -389,7 +374,6 @@ function ProfilePage() {
                           roleValue,
                           usernameValue,
                           newPasswordValue,
-                          emailNotificationValue,
                           profileImageValue,
                         })
                           ? false
