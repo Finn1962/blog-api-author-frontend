@@ -56,7 +56,7 @@ function LogInPage() {
         >
           <legend className="fieldset-legend">Login</legend>
 
-          <label className="label">Email</label>
+          <label className="label">Username or email</label>
           <input
             type="email"
             className="input bg-base-300"
