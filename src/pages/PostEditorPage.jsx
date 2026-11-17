@@ -29,7 +29,6 @@ function PostEditorPage() {
   });
 
   const [statusValue, setStatusValue] = useState("DRAFT");
-  const [sendNotification, setSendNotification] = useState("false");
   const [titleValue, setTitleValue] = useState("");
   const [textEditorValue, setTextEditorValue] = useState("");
   const [tagsValue, setTagsValue] = useState("");
@@ -48,7 +47,6 @@ function PostEditorPage() {
       callback: async (result) => {
         setStatusValue(result.post.status);
         setTitleValue(result.post.title);
-        setSendNotification(`${result.post.send_notification}`);
         setTextEditorValue(result.post.content);
         setProgLangValue(result.post.prog_lang);
         setTagsValue(result.post.tags.map((tag) => tag.content).join(", "));
@@ -83,7 +81,6 @@ function PostEditorPage() {
     formData.append("title", titleValue);
     formData.append("content", textEditorValue);
     formData.append("status", statusValue);
-    formData.append("sendNotification", sendNotification);
     formData.append("tags", tagsValue);
     formData.append("progLang", progLangValue);
     if (imageValue !== "") formData.append("image", imageValue);
@@ -168,11 +165,8 @@ function PostEditorPage() {
               <button
                 onClick={() => {
                   showConfirm();
-                  console.log(sendNotification);
                   setAlertText(
-                    statusValue === "PUBLIC" && sendNotification === "true"
-                      ? "If you view the preview, the post will be saved and users will receive a notification!"
-                      : "If you view the preview, the post will be saved!",
+                    "If you view the preview, the post will be saved!",
                   );
                   setConfirmText("Would you like to continue?");
                   setConfirmCallback(() => () => handlePreview());
@@ -195,14 +189,6 @@ function PostEditorPage() {
               </button>
               <select
                 className="select font-normal border-base-300 bg-base-300 w-min"
-                value={sendNotification}
-                onChange={(event) => setSendNotification(event.target.value)}
-              >
-                <option value={false}>No notifications</option>
-                <option value={true}>Send nofification</option>
-              </select>
-              <select
-                className="select font-normal border-base-300 bg-base-300 w-min"
                 value={statusValue}
                 onChange={(event) => setStatusValue(event.target.value)}
               >
@@ -213,16 +199,7 @@ function PostEditorPage() {
                 disabled={isLoading}
                 className="btn btn btn-primary"
                 onClick={() => {
-                  if (statusValue === "PUBLIC" && sendNotification === "true") {
-                    showConfirm();
-                    setAlertText(
-                      "Users will receive notifications when you publish the post!",
-                    );
-                    setConfirmText("Would you like to continue?");
-                    setConfirmCallback(() => () => handleSafe());
-                  } else {
-                    handleSafe();
-                  }
+                  handleSafe();
                 }}
               >
                 Save
